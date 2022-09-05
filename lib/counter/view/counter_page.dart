@@ -8,7 +8,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:readit/counter/counter.dart';
-import 'package:readit/l10n/l10n.dart';
+
+import 'package:readit/user_authentication.dart';
 
 class CounterPage extends StatelessWidget {
   const CounterPage({super.key});
@@ -22,30 +23,21 @@ class CounterPage extends StatelessWidget {
   }
 }
 
-class CounterView extends StatelessWidget {
+class CounterView extends StatefulWidget {
   const CounterView({super.key});
 
   @override
+  State<CounterView> createState() => _CounterViewState();
+}
+
+class _CounterViewState extends State<CounterView> {
+  @override
   Widget build(BuildContext context) {
-    final l10n = context.l10n;
     return Scaffold(
-      appBar: AppBar(title: Text(l10n.counterAppBarTitle)),
-      body: const Center(child: CounterText()),
-      floatingActionButton: Column(
-        mainAxisAlignment: MainAxisAlignment.end,
-        crossAxisAlignment: CrossAxisAlignment.end,
-        children: [
-          FloatingActionButton(
-            onPressed: () => context.read<CounterCubit>().increment(),
-            child: const Icon(Icons.add),
-          ),
-          const SizedBox(height: 8),
-          FloatingActionButton(
-            onPressed: () => context.read<CounterCubit>().decrement(),
-            child: const Icon(Icons.remove),
-          ),
-        ],
+      appBar: AppBar(
+        title: const Text('ReadIt'),
       ),
+      body: const CounterText(),
     );
   }
 }
@@ -55,8 +47,17 @@ class CounterText extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final count = context.select((CounterCubit cubit) => cubit.state);
-    return Text('$count', style: theme.textTheme.headline1);
+    final provider = UserAuthentication();
+
+    return Center(
+      child: Column(
+        children: [
+          ElevatedButton(
+            onPressed: provider.authenticateUser,
+            child: const Text('Log In'),
+          ),
+        ],
+      ),
+    );
   }
 }

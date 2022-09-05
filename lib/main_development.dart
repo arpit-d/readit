@@ -9,5 +9,5 @@ import 'package:readit/app/app.dart';
 import 'package:readit/bootstrap.dart';
 
 void main() {
-  bootstrap(() => const App());
+  bootstrap(() => const ReaditApp());
 }

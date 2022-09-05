@@ -10,16 +10,17 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:readit/counter/counter.dart';
 import 'package:readit/l10n/l10n.dart';
 
-class App extends StatelessWidget {
-  const App({super.key});
+class ReaditApp extends StatelessWidget {
+  const ReaditApp({super.key});
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        appBarTheme: const AppBarTheme(color: Color(0xFF13B9FF)),
+        appBarTheme: const AppBarTheme(color: Color(0xFF507DD7)),
         colorScheme: ColorScheme.fromSwatch(
-          accentColor: const Color(0xFF13B9FF),
+          accentColor: const Color(0xFF507DD7),
         ),
       ),
       localizationsDelegates: const [
