@@ -9,8 +9,8 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:window_to_front/window_to_front.dart';
 
 class UserAuthentication {
-  late HttpServer server;
-  late String _accessToken;
+  late final HttpServer server;
+  late final String _accessToken;
 
   static const _redditApiUrl = 'https://www.reddit.com/api/v1';
   static const _uriRedirect = 'http://localhost:8080';
