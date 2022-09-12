@@ -7,7 +7,19 @@
 
 import 'package:readit/app/app.dart';
 import 'package:readit/bootstrap.dart';
+import 'package:readit/repository/authentication_repository.dart';
+import 'package:readit/services/credentials_storage.dart';
+import 'package:readit/services/reddit_authenticator.dart';
 
 void main() {
-  bootstrap(() => const ReaditApp());
+  final credentialsStorage = CredentialsStorage();
+  final redditAuthenticator =
+      RedditAuthenticator(credentialsStorage: credentialsStorage);
+  final authenticationRepository =
+      AuthenticationRepository(redditAuthenticator);
+  bootstrap(() => ReaditApp(
+        authenticationRepository: authenticationRepository,
+        redditAuthenticator: redditAuthenticator,
+        credentialsStorage: credentialsStorage,
+      ));
 }

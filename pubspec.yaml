@@ -19,6 +19,9 @@ dependencies:
   http:
   window_to_front: ^0.0.3
   flutter_secure_storage: ^6.0.0
+  equatable: ^2.0.5
+  
+  
 
 dev_dependencies:
   bloc_test: ^9.1.0

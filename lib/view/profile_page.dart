@@ -9,52 +9,56 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:readit/counter/counter.dart';
 
-import 'package:readit/user_authentication.dart';
+import '../bloc/auth_bloc.dart';
 
-class CounterPage extends StatelessWidget {
-  const CounterPage({super.key});
+class ProfilePage extends StatelessWidget {
+  const ProfilePage({super.key});
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (_) => CounterCubit(),
-      child: const CounterView(),
+      child: const ProfileView(),
     );
   }
 }
 
-class CounterView extends StatefulWidget {
-  const CounterView({super.key});
+class ProfileView extends StatefulWidget {
+  const ProfileView({super.key});
 
   @override
-  State<CounterView> createState() => _CounterViewState();
+  State<ProfileView> createState() => _ProfileViewState();
 }
 
-class _CounterViewState extends State<CounterView> {
+class _ProfileViewState extends State<ProfileView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('ReadIt'),
+        title: const Text('ReadIt Profile'),
       ),
       body: const CounterText(),
     );
   }
 }
 
-class CounterText extends StatelessWidget {
+class CounterText extends StatefulWidget {
   const CounterText({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    final provider = UserAuthentication();
+  State<CounterText> createState() => _CounterTextState();
+}
 
-    return Center(
-      child: Column(
+class _CounterTextState extends State<CounterText> {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Column(
         children: [
+          Text('Signed In'),
           ElevatedButton(
-            onPressed: provider.authenticateUser,
-            child: const Text('Log In'),
+            onPressed: () => context.read<AuthBloc>().add(AuthSignOutEvent()),
+            child: Text('Sign Out'),
           ),
         ],
       ),
