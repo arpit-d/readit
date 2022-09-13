@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:readit/models/access_token_response_model.dart';
 
@@ -10,18 +12,19 @@ class CredentialsStorage {
   static const _key = 'accesstoken_credentials';
 
   Future<AccessTokenResponseModel?> read() async {
-    if (_cachedAccessTokenCredentials != null)
+    if (_cachedAccessTokenCredentials != null) {
+      log('Fetching credentials from cache');
       return _cachedAccessTokenCredentials;
+    }
     try {
       final json = await _storage.read(
         key: _key,
         wOptions: WindowsOptions(),
         aOptions: AndroidOptions(),
       );
-      print('json');
-      print(json);
+
       if (json == null) return null;
-      print(_cachedAccessTokenCredentials);
+      log('Fetching credentials from local storage');
       return _cachedAccessTokenCredentials =
           AccessTokenResponseModel.fromJson(json);
     } catch (e, stacktrace) {
@@ -40,6 +43,7 @@ class CredentialsStorage {
   }
 
   Future<void> save(AccessTokenResponseModel accessTokenCredentials) async {
+    log('Saving credentials in cache as  well as storage');
     _cachedAccessTokenCredentials = accessTokenCredentials;
 
     return await _storage.write(
@@ -47,6 +51,7 @@ class CredentialsStorage {
   }
 
   Future<void> delete() async {
+    log('Deleting credentials in cache as  well as storage');
     _cachedAccessTokenCredentials = null;
     return await _storage.delete(key: _key);
   }

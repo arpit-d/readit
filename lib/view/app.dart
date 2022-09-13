@@ -8,14 +8,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:readit/bloc/auth_bloc.dart';
+import 'package:readit/bloc/auth_bloc/auth_bloc.dart';
 import 'package:readit/counter/counter.dart';
 import 'package:readit/l10n/l10n.dart';
 import 'package:readit/services/credentials_storage.dart';
 import 'package:readit/services/reddit_authenticator.dart';
 import 'package:readit/view/sign_up_page.dart';
 
-import '../../repository/authentication_repository.dart';
+import '../repository/authentication_repository.dart';
 
 class ReaditApp extends StatelessWidget {
   final RedditAuthenticator _redditAuthenticator;

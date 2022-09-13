@@ -5,7 +5,7 @@
 // license that can be found in the LICENSE file or at
 // https://opensource.org/licenses/MIT.
 
-import 'package:readit/app/app.dart';
+import 'package:readit/view/app.dart';
 import 'package:readit/bootstrap.dart';
 
 import 'repository/authentication_repository.dart';

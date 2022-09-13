@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
+import 'dart:developer' as dev;
 
 import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
@@ -36,6 +37,7 @@ class RedditAuthenticator {
         Uri.parse(url),
         mode: LaunchMode.externalNonBrowserApplication,
       );
+      dev.log('Launching authentication URL in browser');
       final accessCode = await retrieveCodeFromServer(randomStateString);
       final accessToken = await retrieveAccessToken(accessCode);
       print(accessToken.expiresIn.millisecondsSinceEpoch);
@@ -106,6 +108,7 @@ class RedditAuthenticator {
           'grant_type=authorization_code&code=$accessCode&redirect_uri=http://localhost:8080/',
     );
     if (response.statusCode == 200) {
+      dev.log('RESPONSE STATUS CODE: ${response.statusCode}');
       final responseData =
           AccessTokenResponseModel.fromJson(response.body.toString());
       await _credentialsStorage.save(responseData);
@@ -128,6 +131,7 @@ class RedditAuthenticator {
 
   Future<void> signOut() async {
     try {
+      dev.log('Signing out user');
       _credentialsStorage.delete();
     } catch (e) {}
   }
