@@ -9,7 +9,9 @@ class AuthenticationRepository {
   Future<void> signIn() async {
     try {
       _redditAuthenticator.authenticateUser();
-    } catch (e) {}
+    } catch (e) {
+      rethrow;
+    }
   }
 
   Future<void> signOut() => _redditAuthenticator.signOut();

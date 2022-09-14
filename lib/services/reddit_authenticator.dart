@@ -54,27 +54,30 @@ class RedditAuthenticator {
     server.listen(
       (HttpRequest request) async {
         final state = request.uri.queryParameters['state'];
-        print(state);
-        if (state == randomStateString) {
-          final code = request.uri.queryParameters['code'];
-
+        final error = request.uri.queryParameters['error'];
+        try {
+          if (state == randomStateString) {
+            if (error == null) {
+              final code = request.uri.queryParameters['code'];
+              writeHtmlInAString(
+                  request, 'Welcome to ReadIt', 'You can close this window');
+              onCode.add(code!);
+            } else {
+              throw Exception('Authentication Failed!');
+            }
+          } else {
+            throw Exception(
+                'The state string generated doesn\'t match the string retrieved from local host');
+          }
+        } catch (e, _) {
+          writeHtmlInAString(request, 'Authentication Failed due to $error',
+              'You can close this window & retry again from the app');
+          throw Exception(e.toString());
+        } finally {
           if (Platform.isWindows) await WindowToFront.activate();
-          request.response
-            ..statusCode = 200
-            ..headers.set('Content-Type', ContentType.html.mimeType)
-            ..write(
-              '<html><meta name="viewport" content="width=device-width, initial-scale=1.0"><body> <h2 style="text-align: center; position: absolute; top: 50%; left: 50%: right: 50%">Welcome to ReadIt</h2><h3>You can close this window<script type="javascript">window.close()</script> </h3></body></html>',
-            );
-          await request.response.close();
-          await server.close(force: true);
-          onCode.add(code!);
-          await onCode.close();
-        } else {
           await request.response.close();
           await server.close(force: true);
           await onCode.close();
-          throw Exception(
-              'The state string generated doesn\'t match the string retrieved from local host');
         }
       },
     );
@@ -144,5 +147,14 @@ class RedditAuthenticator {
 
     return String.fromCharCodes(
         List.generate(len, (index) => r.nextInt(33) + 89));
+  }
+
+  Object writeHtmlInAString(HttpRequest request, String text1, String text2) {
+    return request.response
+      ..statusCode = 200
+      ..headers.set('Content-Type', ContentType.html.mimeType)
+      ..write(
+        '<html><meta name="viewport" content="width=device-width, initial-scale=1.0"><body> <h2 style="text-align: center; position: absolute; top: 50%; left: 50%: right: 50%">$text1</h2><h3>$text2<script type="javascript">window.close()</script> </h3></body></html>',
+      );
   }
 }

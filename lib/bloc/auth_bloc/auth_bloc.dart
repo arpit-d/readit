@@ -23,6 +23,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       final isSignedIn = await _authenticationRepository.isSignedIn();
       isSignedIn ? emit(Authenticated()) : emit(Unauthenticated());
     } catch (e) {
+      emit(AuthenticationFailure('Authentication Failed. Please try again!'));
       emit(Unauthenticated());
     }
   }
@@ -34,6 +35,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
           .then((value) => emit(Authenticated()));
     } catch (e) {
       emit(AuthenticationFailure('Authentication Failed. Please try again!'));
+      emit(Unauthenticated());
     }
   }
 
