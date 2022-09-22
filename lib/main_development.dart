@@ -5,6 +5,7 @@
 // license that can be found in the LICENSE file or at
 // https://opensource.org/licenses/MIT.
 
+import 'package:readit/services/user_data_service.dart';
 import 'package:readit/view/app.dart';
 import 'package:readit/bootstrap.dart';
 import 'package:readit/repository/authentication_repository.dart';
@@ -17,9 +18,12 @@ void main() {
       RedditAuthenticator(credentialsStorage: credentialsStorage);
   final authenticationRepository =
       AuthenticationRepository(redditAuthenticator);
+  final UserDataService userDataService =
+      UserDataService(authenticationRepository);
   bootstrap(() => ReaditApp(
         authenticationRepository: authenticationRepository,
         redditAuthenticator: redditAuthenticator,
         credentialsStorage: credentialsStorage,
+        userDataService: userDataService,
       ));
 }

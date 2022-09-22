@@ -19,14 +19,14 @@ class RedditAuthenticator {
 
   // Check already initialized error
   late HttpServer server;
-  late final String _accessToken;
+  String? _accessToken;
 
   static const _redditApiUrl = 'https://www.reddit.com/api/v1';
   static const _uriRedirect = 'http://localhost:8080';
   static const _scopeIdentities =
       '''identity,edit,flair,history,modconfig,modflair,modlog,modposts,modwiki,mysubreddits,privatemessages,read,report,save,submit,subscribe,vote,wikiedit,wikiread''';
 
-  String get accessToken => _accessToken;
+  String? get accessToken => _accessToken;
 
   Future<void> authenticateUser() async {
     final randomStateString = generateRandomString(16);
@@ -84,17 +84,6 @@ class RedditAuthenticator {
     return onCode.stream.first;
   }
 
-  Future<String> getUserData(String accessToken) async {
-    final response = await http.get(
-      Uri.parse('https://oauth.reddit.com/api/v1/me'),
-      headers: {
-        'Authorization': 'bearer $accessToken',
-        'User-Agent': 'ReadIt by /u/arpdp'
-      },
-    );
-    return response.body;
-  }
-
   Future<AccessTokenResponseModel> retrieveAccessToken(
       String accessCode) async {
     const user = CLIENT_ID;
@@ -121,10 +110,18 @@ class RedditAuthenticator {
     }
   }
 
-  Future<AccessTokenResponseModel?> getSignInCredentials() async {
+  Future<String?> getSignInCredentials() async {
     try {
+      if (_accessToken != null) {
+        dev.log('Returning accessToken from cache');
+        return _accessToken;
+      }
       final storedCredentials = await _credentialsStorage.read();
-      if (storedCredentials != null) return storedCredentials;
+      if (storedCredentials != null) {
+        dev.log('Returning accessToken from storage');
+        return _accessToken = storedCredentials.accessToken;
+      }
+      dev.log('No accessToke found, returning null');
       return null;
     } on PlatformException {
       print('platformException');

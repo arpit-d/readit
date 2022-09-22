@@ -6,6 +6,8 @@ class AuthenticationRepository {
   AuthenticationRepository(RedditAuthenticator? redditAuthenticator)
       : _redditAuthenticator = redditAuthenticator ?? RedditAuthenticator();
 
+  String? retrieveAccessToken() => _redditAuthenticator.accessToken;
+
   Future<void> signIn() async {
     try {
       _redditAuthenticator.authenticateUser();
@@ -17,4 +19,7 @@ class AuthenticationRepository {
   Future<void> signOut() => _redditAuthenticator.signOut();
 
   Future<bool> isSignedIn() => _redditAuthenticator.isSignedIn();
+
+  Future<String?> getSignedInCredentials() =>
+      _redditAuthenticator.getSignInCredentials();
 }

@@ -11,6 +11,7 @@ import 'package:readit/bootstrap.dart';
 import 'repository/authentication_repository.dart';
 import 'services/credentials_storage.dart';
 import 'services/reddit_authenticator.dart';
+import 'services/user_data_service.dart';
 
 void main() {
   final credentialsStorage = CredentialsStorage();
@@ -18,9 +19,12 @@ void main() {
       RedditAuthenticator(credentialsStorage: credentialsStorage);
   final authenticationRepository =
       AuthenticationRepository(redditAuthenticator);
+  final UserDataService userDataService =
+      UserDataService(authenticationRepository);
   bootstrap(() => ReaditApp(
         authenticationRepository: authenticationRepository,
         redditAuthenticator: redditAuthenticator,
         credentialsStorage: credentialsStorage,
+        userDataService: userDataService,
       ));
 }

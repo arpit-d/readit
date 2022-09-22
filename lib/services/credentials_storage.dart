@@ -43,7 +43,7 @@ class CredentialsStorage {
   }
 
   Future<void> save(AccessTokenResponseModel accessTokenCredentials) async {
-    log('Saving credentials in cache as  well as storage');
+    log('Saving credentials in cache as well as storage');
     _cachedAccessTokenCredentials = accessTokenCredentials;
 
     return await _storage.write(
@@ -51,7 +51,7 @@ class CredentialsStorage {
   }
 
   Future<void> delete() async {
-    log('Deleting credentials in cache as  well as storage');
+    log('Deleting credentials in cache as well as storage');
     _cachedAccessTokenCredentials = null;
     return await _storage.delete(key: _key);
   }

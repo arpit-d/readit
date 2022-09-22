@@ -10,24 +10,30 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:readit/bloc/auth_bloc/auth_bloc.dart';
 import 'package:readit/counter/counter.dart';
+import 'package:readit/cubit/user_data_cubit.dart';
 import 'package:readit/l10n/l10n.dart';
 import 'package:readit/services/credentials_storage.dart';
 import 'package:readit/services/reddit_authenticator.dart';
+import 'package:readit/services/user_data_service.dart';
 import 'package:readit/view/sign_up_page.dart';
 
 import '../repository/authentication_repository.dart';
+import '../repository/user_data_repository.dart';
 
 class ReaditApp extends StatelessWidget {
   final RedditAuthenticator _redditAuthenticator;
   final AuthenticationRepository _authenticationRepository;
   final CredentialsStorage _credentialsStorage;
-  const ReaditApp({
-    super.key,
-    required AuthenticationRepository authenticationRepository,
-    required RedditAuthenticator redditAuthenticator,
-    required CredentialsStorage credentialsStorage,
-  })  : _authenticationRepository = authenticationRepository,
+  final UserDataService _userDataService;
+  const ReaditApp(
+      {super.key,
+      required AuthenticationRepository authenticationRepository,
+      required RedditAuthenticator redditAuthenticator,
+      required CredentialsStorage credentialsStorage,
+      required UserDataService userDataService})
+      : _authenticationRepository = authenticationRepository,
         _redditAuthenticator = redditAuthenticator,
+        _userDataService = userDataService,
         _credentialsStorage = credentialsStorage;
 
   @override
@@ -42,6 +48,9 @@ class ReaditApp extends StatelessWidget {
         ),
         RepositoryProvider.value(
           value: _credentialsStorage,
+        ),
+        RepositoryProvider.value(
+          value: UserDataRepository(_userDataService),
         ),
       ],
       child: MaterialApp(
@@ -78,7 +87,13 @@ class AuthWrapper extends StatelessWidget {
         // TODO: implement listener
       },
       builder: (context, state) {
-        if (state is Authenticated) return ProfilePage();
+        if (state is Authenticated)
+          return BlocProvider(
+            //  lazy: false,
+            create: (context) =>
+                UserDataCubit(context.read<UserDataRepository>()),
+            child: ProfilePage(),
+          );
         if (state is Unauthenticated) return SignUpPage();
         if (state is AuthenticationFailure) return Text(state.errorMessage);
         return CircularProgressIndicator();
