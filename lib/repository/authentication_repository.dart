@@ -10,7 +10,7 @@ class AuthenticationRepository {
 
   Future<void> signIn() async {
     try {
-      _redditAuthenticator.authenticateUser();
+      await _redditAuthenticator.authenticateUser();
     } catch (e) {
       rethrow;
     }
@@ -18,7 +18,7 @@ class AuthenticationRepository {
 
   Future<void> signOut() => _redditAuthenticator.signOut();
 
-  Future<bool> isSignedIn() => _redditAuthenticator.isSignedIn();
+  Future<bool> isSignedIn() async => await _redditAuthenticator.isSignedIn();
 
   Future<String?> getSignedInCredentials() =>
       _redditAuthenticator.getSignInCredentials();

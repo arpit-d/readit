@@ -87,16 +87,18 @@ class AuthWrapper extends StatelessWidget {
         // TODO: implement listener
       },
       builder: (context, state) {
-        if (state is Authenticated)
+        if (state is Authenticated) {
           return BlocProvider(
-            //  lazy: false,
             create: (context) =>
                 UserDataCubit(context.read<UserDataRepository>()),
             child: ProfilePage(),
           );
-        if (state is Unauthenticated) return SignUpPage();
+        }
+        if (state is CheckAuthStatusEvent) return CircularProgressIndicator();
+        if (state is Unauthenticated || state is AuthInitial)
+          return SignUpPage();
         if (state is AuthenticationFailure) return Text(state.errorMessage);
-        return CircularProgressIndicator();
+        return Container();
       },
     );
   }

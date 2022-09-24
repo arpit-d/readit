@@ -37,12 +37,14 @@ class RedditAuthenticator {
         Uri.parse(url),
         mode: LaunchMode.externalNonBrowserApplication,
       );
-      dev.log('Launching authentication URL in browser');
-      final accessCode = await retrieveCodeFromServer(randomStateString);
-      final accessToken = await retrieveAccessToken(accessCode);
-      print(accessToken.expiresIn.millisecondsSinceEpoch);
-      // final userData = await getUserData(accessToken);
-      // print(userData);
+      try {
+        dev.log('Launching authentication URL in browser');
+        final accessCode = await retrieveCodeFromServer(randomStateString);
+        final accessToken = await retrieveAccessToken(accessCode);
+        print(accessToken.expiresIn.millisecondsSinceEpoch);
+      } catch (e) {
+        rethrow;
+      }
     } else {
       throw Exception('Could not launch $url');
     }
@@ -121,7 +123,7 @@ class RedditAuthenticator {
         dev.log('Returning accessToken from storage');
         return _accessToken = storedCredentials.accessToken;
       }
-      dev.log('No accessToke found, returning null');
+      dev.log('No accessToken found, returning null');
       return null;
     } on PlatformException {
       print('platformException');
@@ -132,6 +134,7 @@ class RedditAuthenticator {
   Future<void> signOut() async {
     try {
       dev.log('Signing out user');
+      _accessToken = null;
       _credentialsStorage.delete();
     } catch (e) {}
   }

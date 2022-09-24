@@ -67,6 +67,9 @@ class _CounterTextState extends State<CounterText> {
           if (state is UserDataLoadingState) {
             return CircularProgressIndicator();
           }
+          if (state is UserDataErrorState) {
+            return Text('err');
+          }
           if (state is UserDataLoadedState) {
             final data = state.userData;
             return Column(
@@ -81,7 +84,7 @@ class _CounterTextState extends State<CounterText> {
               ],
             );
           }
-          return Container();
+          return CircularProgressIndicator();
         },
       ),
     );

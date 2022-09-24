@@ -30,9 +30,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
   void _onAuthSignIn(AuthSignInEvent event, Emitter<AuthState> emit) async {
     try {
-      await _authenticationRepository
-          .signIn()
-          .then((value) => emit(Authenticated()));
+      await _authenticationRepository.signIn();
+      emit(Authenticated());
     } catch (e) {
       emit(AuthenticationFailure('Authentication Failed. Please try again!'));
       emit(Unauthenticated());
