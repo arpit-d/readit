@@ -17,7 +17,9 @@ class ProfilePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Color(0xFF1f1d28),
       appBar: AppBar(
+        centerTitle: true,
         title: Text('Profile'),
       ),
       body: BlocBuilder<UserDataCubit, UserDataState>(
@@ -30,16 +32,42 @@ class ProfilePage extends StatelessWidget {
           }
           if (state is UserDataLoadedState) {
             final data = state.userData;
-            return Column(
-              children: [
-                ElevatedButton(
-                  onPressed: () =>
-                      context.read<AuthBloc>().add(AuthSignOutEvent()),
-                  child: Text('Sign Out'),
-                ),
-                Text('${data.name}'),
-                Text('${data.totalKarma}'),
-              ],
+            return Container(
+              width: double.infinity,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  ElevatedButton(
+                    style: ButtonStyle(
+                      backgroundColor: MaterialStatePropertyAll(
+                        Theme.of(context).colorScheme.secondary,
+                      ),
+                    ),
+                    onPressed: () =>
+                        context.read<AuthBloc>().add(AuthSignOutEvent()),
+                    child: Text('Sign Out'),
+                  ),
+                  CircleAvatar(
+                    radius: 100,
+                    child: ClipRRect(
+                      clipBehavior: Clip.antiAliasWithSaveLayer,
+                      borderRadius: BorderRadius.circular(100.0),
+                      child: Image.network(
+                        '${data.iconImg}',
+                      ),
+                    ),
+                  ),
+                  Text(
+                    '${data.name}',
+                    style: TextStyle(color: Colors.white),
+                  ),
+                  Text(
+                    '${data.totalKarma}',
+                    style: TextStyle(color: Colors.white),
+                  ),
+                ],
+              ),
             );
           }
           return CircularProgressIndicator();

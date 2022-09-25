@@ -17,6 +17,7 @@ import 'package:readit/services/user_data_service.dart';
 import 'package:readit/view/profile_page.dart';
 import 'package:readit/view/sign_up_page.dart';
 
+import '../core/utils/snackbars.dart';
 import '../repository/authentication_repository.dart';
 import '../repository/user_data_repository.dart';
 
@@ -56,9 +57,9 @@ class ReaditApp extends StatelessWidget {
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
         theme: ThemeData(
-          appBarTheme: const AppBarTheme(color: Color(0xFF507DD7)),
+          appBarTheme: const AppBarTheme(color: Color(0xFFe80040)),
           colorScheme: ColorScheme.fromSwatch(
-            accentColor: const Color(0xFF507DD7),
+            accentColor: const Color(0xFF5956ed),
           ),
         ),
         localizationsDelegates: const [
@@ -84,7 +85,18 @@ class AuthWrapper extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocConsumer<AuthBloc, AuthState>(
       listener: (context, state) {
-        // TODO: implement listener
+        if (state is Authenticated)
+          showSnackbar(
+            context,
+            message: 'Logged In Successfully!',
+            snackbarType: SnackbarType.error,
+          );
+        if (state is Unauthenticated)
+          showSnackbar(
+            context,
+            message: 'Logged Out!',
+            snackbarType: SnackbarType.error,
+          );
       },
       builder: (context, state) {
         if (state is Authenticated) {
