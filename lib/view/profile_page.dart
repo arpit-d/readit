@@ -19,6 +19,17 @@ class ProfilePage extends StatelessWidget {
     return Scaffold(
       backgroundColor: Color(0xFF1f1d28),
       appBar: AppBar(
+        actions: [
+          ElevatedButton(
+            style: ButtonStyle(
+              backgroundColor: MaterialStatePropertyAll(
+                Theme.of(context).colorScheme.secondary,
+              ),
+            ),
+            onPressed: () => context.read<AuthBloc>().add(AuthSignOutEvent()),
+            child: Text('Sign Out'),
+          ),
+        ],
         centerTitle: true,
         title: Text('Profile'),
       ),
@@ -38,16 +49,6 @@ class ProfilePage extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  ElevatedButton(
-                    style: ButtonStyle(
-                      backgroundColor: MaterialStatePropertyAll(
-                        Theme.of(context).colorScheme.secondary,
-                      ),
-                    ),
-                    onPressed: () =>
-                        context.read<AuthBloc>().add(AuthSignOutEvent()),
-                    child: Text('Sign Out'),
-                  ),
                   CircleAvatar(
                     radius: 100,
                     child: ClipRRect(

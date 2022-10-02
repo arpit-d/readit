@@ -9,49 +9,68 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:readit/bloc/auth_bloc/auth_bloc.dart';
-import 'package:readit/cubit/user_data_cubit.dart';
+import 'package:readit/bloc/reddit_posts_bloc/reddit_posts_bloc.dart';
 import 'package:readit/l10n/l10n.dart';
+import 'package:readit/repository/reddit_posts_repository.dart';
 import 'package:readit/services/credentials_storage.dart';
 import 'package:readit/services/reddit_authenticator.dart';
+import 'package:readit/services/reddit_posts_service.dart';
 import 'package:readit/services/user_data_service.dart';
-import 'package:readit/view/profile_page.dart';
+import 'package:readit/view/screens/home_screen.dart';
 import 'package:readit/view/sign_up_page.dart';
 
 import '../core/utils/snackbars.dart';
 import '../repository/authentication_repository.dart';
 import '../repository/user_data_repository.dart';
 
-class ReaditApp extends StatelessWidget {
+class ReaditApp extends StatefulWidget {
   final RedditAuthenticator _redditAuthenticator;
   final AuthenticationRepository _authenticationRepository;
   final CredentialsStorage _credentialsStorage;
   final UserDataService _userDataService;
+  final RedditPostsService _redditPostsService;
   const ReaditApp(
       {super.key,
       required AuthenticationRepository authenticationRepository,
       required RedditAuthenticator redditAuthenticator,
       required CredentialsStorage credentialsStorage,
-      required UserDataService userDataService})
+      required UserDataService userDataService,
+      required RedditPostsService redditPostsService})
       : _authenticationRepository = authenticationRepository,
         _redditAuthenticator = redditAuthenticator,
         _userDataService = userDataService,
-        _credentialsStorage = credentialsStorage;
+        _credentialsStorage = credentialsStorage,
+        _redditPostsService = redditPostsService;
+
+  @override
+  State<ReaditApp> createState() => _ReaditAppState();
+}
+
+class _ReaditAppState extends State<ReaditApp> {
+  @override
+  void initState() {
+    widget._redditPostsService.fetchRedditPosts();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
     return MultiRepositoryProvider(
       providers: [
         RepositoryProvider.value(
-          value: _authenticationRepository,
+          value: widget._authenticationRepository,
         ),
         RepositoryProvider.value(
-          value: _redditAuthenticator,
+          value: widget._redditAuthenticator,
         ),
         RepositoryProvider.value(
-          value: _credentialsStorage,
+          value: widget._credentialsStorage,
         ),
         RepositoryProvider.value(
-          value: UserDataRepository(_userDataService),
+          value: UserDataRepository(widget._userDataService),
+        ),
+        RepositoryProvider.value(
+          value: RedditPostsRepository(widget._redditPostsService),
         ),
       ],
       child: MaterialApp(
@@ -70,7 +89,8 @@ class ReaditApp extends StatelessWidget {
         home: BlocProvider<AuthBloc>(
           lazy: false,
           create: (BuildContext context) =>
-              AuthBloc(_authenticationRepository)..add(CheckAuthStatusEvent()),
+              AuthBloc(widget._authenticationRepository)
+                ..add(CheckAuthStatusEvent()),
           child: AuthWrapper(),
         ),
       ),
@@ -100,17 +120,23 @@ class AuthWrapper extends StatelessWidget {
       },
       builder: (context, state) {
         if (state is Authenticated) {
+          // return BlocProvider(
+          //   create: (context) =>
+          //       UserDataCubit(context.read<UserDataRepository>()),
+          //   child: ProfilePage(),
+          // );
           return BlocProvider(
             create: (context) =>
-                UserDataCubit(context.read<UserDataRepository>()),
-            child: ProfilePage(),
+                RedditPostsBloc(context.read<RedditPostsRepository>())
+                  ..add(LoadRedditPosts()),
+            child: HomeScreen(),
           );
         }
         if (state is CheckAuthStatusEvent) return CircularProgressIndicator();
         if (state is Unauthenticated || state is AuthInitial)
           return SignUpPage();
         if (state is AuthenticationFailure) return Text(state.errorMessage);
-        return Container();
+        return SignUpPage();
       },
     );
   }
