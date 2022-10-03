@@ -10,37 +10,17 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:readit/bloc/auth_bloc/auth_bloc.dart';
 import 'package:readit/bloc/reddit_posts_bloc/reddit_posts_bloc.dart';
+import 'package:readit/core/locator.dart';
 import 'package:readit/l10n/l10n.dart';
+import 'package:readit/repository/authentication_repository.dart';
 import 'package:readit/repository/reddit_posts_repository.dart';
-import 'package:readit/services/credentials_storage.dart';
-import 'package:readit/services/reddit_authenticator.dart';
-import 'package:readit/services/reddit_posts_service.dart';
-import 'package:readit/services/user_data_service.dart';
 import 'package:readit/view/screens/home_screen.dart';
 import 'package:readit/view/sign_up_page.dart';
 
 import '../core/utils/snackbars.dart';
-import '../repository/authentication_repository.dart';
-import '../repository/user_data_repository.dart';
 
 class ReaditApp extends StatefulWidget {
-  final RedditAuthenticator _redditAuthenticator;
-  final AuthenticationRepository _authenticationRepository;
-  final CredentialsStorage _credentialsStorage;
-  final UserDataService _userDataService;
-  final RedditPostsService _redditPostsService;
-  const ReaditApp(
-      {super.key,
-      required AuthenticationRepository authenticationRepository,
-      required RedditAuthenticator redditAuthenticator,
-      required CredentialsStorage credentialsStorage,
-      required UserDataService userDataService,
-      required RedditPostsService redditPostsService})
-      : _authenticationRepository = authenticationRepository,
-        _redditAuthenticator = redditAuthenticator,
-        _userDataService = userDataService,
-        _credentialsStorage = credentialsStorage,
-        _redditPostsService = redditPostsService;
+  const ReaditApp({super.key});
 
   @override
   State<ReaditApp> createState() => _ReaditAppState();
@@ -49,50 +29,30 @@ class ReaditApp extends StatefulWidget {
 class _ReaditAppState extends State<ReaditApp> {
   @override
   void initState() {
-    widget._redditPostsService.fetchRedditPosts();
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    return MultiRepositoryProvider(
-      providers: [
-        RepositoryProvider.value(
-          value: widget._authenticationRepository,
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      theme: ThemeData(
+        appBarTheme: const AppBarTheme(color: Color(0xFFe80040)),
+        colorScheme: ColorScheme.fromSwatch(
+          accentColor: const Color(0xFF5956ed),
         ),
-        RepositoryProvider.value(
-          value: widget._redditAuthenticator,
-        ),
-        RepositoryProvider.value(
-          value: widget._credentialsStorage,
-        ),
-        RepositoryProvider.value(
-          value: UserDataRepository(widget._userDataService),
-        ),
-        RepositoryProvider.value(
-          value: RedditPostsRepository(widget._redditPostsService),
-        ),
+      ),
+      localizationsDelegates: const [
+        AppLocalizations.delegate,
+        GlobalMaterialLocalizations.delegate,
       ],
-      child: MaterialApp(
-        debugShowCheckedModeBanner: false,
-        theme: ThemeData(
-          appBarTheme: const AppBarTheme(color: Color(0xFFe80040)),
-          colorScheme: ColorScheme.fromSwatch(
-            accentColor: const Color(0xFF5956ed),
-          ),
-        ),
-        localizationsDelegates: const [
-          AppLocalizations.delegate,
-          GlobalMaterialLocalizations.delegate,
-        ],
-        supportedLocales: AppLocalizations.supportedLocales,
-        home: BlocProvider<AuthBloc>(
-          lazy: false,
-          create: (BuildContext context) =>
-              AuthBloc(widget._authenticationRepository)
-                ..add(CheckAuthStatusEvent()),
-          child: AuthWrapper(),
-        ),
+      supportedLocales: AppLocalizations.supportedLocales,
+      home: BlocProvider<AuthBloc>(
+        lazy: false,
+        create: (BuildContext context) =>
+            AuthBloc(locator.get<AuthenticationRepository>())
+              ..add(CheckAuthStatusEvent()),
+        child: AuthWrapper(),
       ),
     );
   }
@@ -127,7 +87,7 @@ class AuthWrapper extends StatelessWidget {
           // );
           return BlocProvider(
             create: (context) =>
-                RedditPostsBloc(context.read<RedditPostsRepository>())
+                RedditPostsBloc(locator.get<RedditPostsRepository>())
                   ..add(LoadRedditPosts()),
             child: HomeScreen(),
           );

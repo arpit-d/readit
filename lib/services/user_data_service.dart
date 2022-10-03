@@ -2,11 +2,15 @@ import 'dart:developer';
 
 import 'package:http/http.dart' as http;
 
+import '../core/locator.dart';
 import '../repository/authentication_repository.dart';
 
 class UserDataService {
   final AuthenticationRepository _authenticationRepository;
-  UserDataService(this._authenticationRepository) {}
+  UserDataService({AuthenticationRepository? authenticationRepository})
+      : _authenticationRepository =
+            authenticationRepository ?? locator.get<AuthenticationRepository>();
+
   Future<String> getUserData() async {
     final accessToken =
         await _authenticationRepository.getSignedInCredentials();

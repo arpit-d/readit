@@ -1,12 +1,17 @@
 import 'dart:developer';
 
 import 'package:http/http.dart' as http;
+import 'package:readit/core/locator.dart';
 import '../repository/authentication_repository.dart';
 
 class RedditPostsService {
   final AuthenticationRepository _authenticationRepository;
+
+  RedditPostsService({AuthenticationRepository? authenticationRepository})
+      : _authenticationRepository =
+            authenticationRepository ?? locator.get<AuthenticationRepository>();
   final url = "https://oauth.reddit.com/.json?limit=25";
-  RedditPostsService(this._authenticationRepository);
+
   Future<String> fetchRedditPosts() async {
     final accessToken =
         await _authenticationRepository.getSignedInCredentials();

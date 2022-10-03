@@ -1,10 +1,13 @@
 import 'package:readit/services/reddit_authenticator.dart';
 
+import '../core/locator.dart';
+
 class AuthenticationRepository {
   final RedditAuthenticator _redditAuthenticator;
 
-  AuthenticationRepository(RedditAuthenticator? redditAuthenticator)
-      : _redditAuthenticator = redditAuthenticator ?? RedditAuthenticator();
+  AuthenticationRepository({RedditAuthenticator? redditAuthenticator})
+      : _redditAuthenticator =
+            redditAuthenticator ?? locator.get<RedditAuthenticator>();
 
   String? retrieveAccessToken() => _redditAuthenticator.accessToken;
 

@@ -6,6 +6,7 @@ import 'dart:developer' as dev;
 
 import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
+import 'package:readit/core/locator.dart';
 import 'package:readit/models/access_token_response_model.dart';
 import 'package:readit/secrets.dart';
 import 'package:readit/services/credentials_storage.dart';
@@ -15,7 +16,8 @@ import 'package:window_to_front/window_to_front.dart';
 class RedditAuthenticator {
   final CredentialsStorage _credentialsStorage;
   RedditAuthenticator({CredentialsStorage? credentialsStorage})
-      : _credentialsStorage = credentialsStorage ?? CredentialsStorage();
+      : _credentialsStorage =
+            credentialsStorage ?? locator.get<CredentialsStorage>();
 
   // Check already initialized error
   late HttpServer server;

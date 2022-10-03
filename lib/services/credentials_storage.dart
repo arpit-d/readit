@@ -1,12 +1,13 @@
 import 'dart:developer';
 
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:readit/core/locator.dart';
 import 'package:readit/models/access_token_response_model.dart';
 
 class CredentialsStorage {
   final FlutterSecureStorage _storage;
   CredentialsStorage({FlutterSecureStorage? storage})
-      : _storage = storage ?? FlutterSecureStorage();
+      : _storage = storage ?? locator.get<FlutterSecureStorage>();
 
   AccessTokenResponseModel? _cachedAccessTokenCredentials;
   static const _key = 'accesstoken_credentials';

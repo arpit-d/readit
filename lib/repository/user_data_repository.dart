@@ -3,10 +3,13 @@ import 'dart:convert';
 import 'package:readit/models/user_data_model.dart';
 import 'package:readit/services/user_data_service.dart';
 
+import '../core/locator.dart';
+
 class UserDataRepository {
   final UserDataService _userDataService;
 
-  UserDataRepository(this._userDataService);
+  UserDataRepository({UserDataService? userDataService})
+      : _userDataService = userDataService ?? locator.get<UserDataService>();
   Future<UserDataModel> getUserData() async {
     try {
       final userData = _userDataService.getUserData();
