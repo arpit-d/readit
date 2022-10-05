@@ -21,6 +21,7 @@ dependencies:
   flutter_secure_storage: ^6.0.0
   equatable: ^2.0.5
   get_it: ^7.2.0
+  flutter_svg: ^1.1.5
   
   
 
@@ -34,3 +35,5 @@ dev_dependencies:
 flutter:
   uses-material-design: true
   generate: true
+  assets: 
+    - assets/

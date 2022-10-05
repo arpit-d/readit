@@ -36,12 +36,12 @@ class _ReaditAppState extends State<ReaditApp> {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        appBarTheme: const AppBarTheme(color: Color(0xFFe80040)),
-        colorScheme: ColorScheme.fromSwatch(
-          accentColor: const Color(0xFF5956ed),
-        ),
-      ),
+      // theme: ThemeData(
+      //   appBarTheme: const AppBarTheme(color: Color(0xFFe80040)),
+      //   colorScheme: ColorScheme.fromSwatch(
+      //     accentColor: const Color(0xFF5956ed),
+      //   ),
+      // ),
       localizationsDelegates: const [
         AppLocalizations.delegate,
         GlobalMaterialLocalizations.delegate,
