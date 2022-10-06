@@ -70,78 +70,85 @@ class HomeScreen extends StatelessWidget {
                         log(post.data.url_overridden_by_dest.toString());
                         return SizedBox(
                           height: MediaQuery.of(context).size.height * 0.18,
-                          child: Card(
-                            shadowColor: Colors.white,
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.all(
-                              Radius.circular(4),
-                            )),
-                            elevation: 12,
-                            child: Row(
-                              children: [
-                                Container(
-                                  padding: EdgeInsets.all(12),
-                                  // height:
-                                  //     MediaQuery.of(context).size.height * 0.16,
-                                  width:
-                                      MediaQuery.of(context).size.height * 0.25,
-                                  child: post.data.url_overridden_by_dest ==
-                                          null
-                                      ? Icon(Icons.message)
-                                      : Image.network(
-                                          post.data.url_overridden_by_dest
-                                                  .toString()
-                                                  .contains('gfycat')
-                                              ? post.data.url_overridden_by_dest
-                                                      .toString() +
-                                                  '.gif'
-                                              : post.data.url_overridden_by_dest
-                                                          .toString()
-                                                          .contains(
-                                                              'v.redd.it') ||
-                                                      (!post.data
-                                                              .url_overridden_by_dest
-                                                              .toString()
-                                                              .contains(
-                                                                  'jpg') &&
-                                                          !post.data
-                                                              .url_overridden_by_dest
-                                                              .toString()
-                                                              .contains('jpg'))
-                                                  ? post.data.thumbnail
-                                                      .toString()
-                                                  : post.data
-                                                      .url_overridden_by_dest
-                                                      .toString(),
-                                          // fit: BoxFit.fill,
-                                        ),
-                                ),
-                                Flexible(
-                                  child: Container(
+                          child: InkWell(
+                            onTap: () {},
+                            mouseCursor: MaterialStateMouseCursor.clickable,
+                            child: Card(
+                              shadowColor: Colors.white,
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.all(
+                                Radius.circular(4),
+                              )),
+                              elevation: 12,
+                              child: Row(
+                                children: [
+                                  Container(
                                     padding: EdgeInsets.all(12),
-                                    child: Column(
-                                      mainAxisSize: MainAxisSize.max,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Text(
-                                          post.data.title,
-                                          overflow: TextOverflow.ellipsis,
-                                          maxLines: 2,
-                                        ),
-                                        Text(
-                                          post.data.subredditNamePrefixed +
-                                              ' • ' +
-                                              post.data.author,
-                                          style: TextStyle(),
-                                        ),
-                                      ],
+                                    // height:
+                                    //     MediaQuery.of(context).size.height * 0.16,
+                                    width: MediaQuery.of(context).size.height *
+                                        0.25,
+                                    child: post.data.url_overridden_by_dest ==
+                                                null ||
+                                            post.data.thumbnail == 'default'
+                                        ? Icon(Icons.message)
+                                        : Image.network(
+                                            post.data.url_overridden_by_dest
+                                                    .toString()
+                                                    .contains('gfycat')
+                                                ? post.data
+                                                        .url_overridden_by_dest
+                                                        .toString() +
+                                                    '.gif'
+                                                : post.data.url_overridden_by_dest
+                                                            .toString()
+                                                            .contains(
+                                                                'v.redd.it') ||
+                                                        (!post.data
+                                                                .url_overridden_by_dest
+                                                                .toString()
+                                                                .contains(
+                                                                    'jpg') &&
+                                                            !post.data
+                                                                .url_overridden_by_dest
+                                                                .toString()
+                                                                .contains(
+                                                                    'jpg'))
+                                                    ? post.data.thumbnail
+                                                        .toString()
+                                                    : post.data
+                                                        .url_overridden_by_dest
+                                                        .toString(),
+                                            // fit: BoxFit.fill,
+                                          ),
+                                  ),
+                                  Flexible(
+                                    child: Container(
+                                      padding: EdgeInsets.all(12),
+                                      child: Column(
+                                        mainAxisSize: MainAxisSize.max,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Text(
+                                            post.data.title,
+                                            overflow: TextOverflow.ellipsis,
+                                            maxLines: 2,
+                                          ),
+                                          Text(
+                                            post.data.subredditNamePrefixed +
+                                                ' • ' +
+                                                post.data.author,
+                                            style: TextStyle(),
+                                          ),
+                                        ],
+                                      ),
                                     ),
                                   ),
-                                ),
-                              ],
+                                ],
+                              ),
                             ),
                           ),
                         );
