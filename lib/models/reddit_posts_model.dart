@@ -1,9 +1,12 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:convert';
+
+import 'package:equatable/equatable.dart';
 
 String redditPostsModelToJson(RedditPostsModel data) =>
     json.encode(data.toJson());
 
-class RedditPostsModel {
+class RedditPostsModel extends Equatable {
   RedditPostsModel({
     required this.kind,
     required this.data,
@@ -32,6 +35,9 @@ class RedditPostsModel {
         "kind": kind,
         "data": data.toJson(),
       };
+
+  @override
+  List<Object> get props => [kind, data];
 }
 
 class RedditPostsModelData {

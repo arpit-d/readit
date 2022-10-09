@@ -10,11 +10,3 @@ abstract class RedditPostsEvent extends Equatable {
 class LoadRedditPosts extends RedditPostsEvent {
   const LoadRedditPosts();
 }
-
-class RedditPostsLoaded extends RedditPostsEvent {
-  const RedditPostsLoaded();
-}
-
-class RedditPostsFailure extends RedditPostsEvent {
-  const RedditPostsFailure();
-}

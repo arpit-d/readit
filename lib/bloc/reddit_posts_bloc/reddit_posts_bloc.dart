@@ -10,6 +10,9 @@ part 'reddit_posts_state.dart';
 
 class RedditPostsBloc extends Bloc<RedditPostsEvent, RedditPostsState> {
   final RedditPostsRepository _postsRepository;
+  int postLimit = 20;
+  bool isFetching = false;
+
   RedditPostsBloc(this._postsRepository) : super(LoadingRedditPosts()) {
     on<LoadRedditPosts>(_loadRedditPosts);
   }
@@ -17,8 +20,10 @@ class RedditPostsBloc extends Bloc<RedditPostsEvent, RedditPostsState> {
   void _loadRedditPosts(
       LoadRedditPosts event, Emitter<RedditPostsState> emit) async {
     try {
-      final redditPosts = await _postsRepository.getRedditPosts();
+      final redditPosts = await _postsRepository.getRedditPosts(postLimit);
       emit(LoadedRedditPostsSuccessfully(await redditPosts));
+      postLimit += 10;
+      log(postLimit.toString());
     } catch (e) {
       log(e.toString());
       emit(RedditPostsFailed());

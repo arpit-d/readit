@@ -10,14 +10,14 @@ class RedditPostsService {
   RedditPostsService({AuthenticationRepository? authenticationRepository})
       : _authenticationRepository =
             authenticationRepository ?? locator.get<AuthenticationRepository>();
-  final url = "https://oauth.reddit.com/.json?limit=25";
+  final url = "https://oauth.reddit.com/.json?";
 
-  Future<String> fetchRedditPosts() async {
+  Future<String> fetchRedditPosts(int postLimit) async {
     final accessToken =
         await _authenticationRepository.getSignedInCredentials();
     log(accessToken!);
     final response = await http.get(
-      Uri.parse(url),
+      Uri.parse(url + "limit=$postLimit"),
       headers: {
         'Authorization': 'bearer $accessToken',
         'User-Agent': 'ReadIt by /u/arpdp',
