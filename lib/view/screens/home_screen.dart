@@ -60,6 +60,11 @@ class _HomeScreenState extends State<HomeScreen> {
                 message: 'Loading More Posts!',
                 snackbarType: SnackbarType.success);
           }
+          if (state is RedditPostsFailed) {
+            showSnackbar(context,
+                message: 'Failed To Load Posts, Please Try Again!',
+                snackbarType: SnackbarType.success);
+          }
         },
         builder: (context, state) {
           if (state is LoadedRedditPostsSuccessfully) {
@@ -117,15 +122,34 @@ class _HomeScreenState extends State<HomeScreen> {
             );
           }
           if (state is RedditPostsFailed) {
+            final errorState = state.failedMessage;
             return Center(
-              child: Text(
-                'Something went wrong!',
-                style: TextStyle(),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    'Something went wrong! \n$errorState',
+                    style: TextStyle(),
+                  ),
+                  ElevatedButton(
+                    style: ButtonStyle(
+                      backgroundColor: MaterialStatePropertyAll(
+                        Theme.of(context).colorScheme.secondary,
+                      ),
+                    ),
+                    onPressed: () =>
+                        context.read<RedditPostsBloc>().add(LoadRedditPosts()),
+                    child: Text(
+                      'Try Reloading!',
+                    ),
+                  ),
+                ],
               ),
             );
           }
           return Center(
-            child: CircularProgressIndicator(),
+            child: LoadingIndicator(),
           );
         },
       ),

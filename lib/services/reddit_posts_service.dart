@@ -1,4 +1,5 @@
 import 'dart:developer';
+import 'dart:io';
 
 import 'package:http/http.dart' as http;
 import 'package:readit/core/locator.dart';
@@ -13,17 +14,24 @@ class RedditPostsService {
   final url = "https://oauth.reddit.com/.json?";
 
   Future<String> fetchRedditPosts(int postLimit) async {
-    final accessToken =
-        await _authenticationRepository.getSignedInCredentials();
-    log(accessToken!);
-    final response = await http.get(
-      Uri.parse(url + "limit=$postLimit"),
-      headers: {
-        'Authorization': 'bearer $accessToken',
-        'User-Agent': 'ReadIt by /u/arpdp',
-        'Content-Type': 'application/json',
-      },
-    );
-    return response.body;
+    try {
+      final accessToken =
+          await _authenticationRepository.getSignedInCredentials();
+      log(accessToken!);
+      final response = await http.get(
+        Uri.parse(url + "limit=$postLimit"),
+        headers: {
+          'Authorization': 'bearer $accessToken',
+          'User-Agent': 'ReadIt by /u/arpdp',
+          'Content-Type': 'application/json',
+        },
+      );
+      return response.body;
+    } on SocketException {
+      throw Exception('No Network Found!');
+    } catch (e) {
+      log(e.toString());
+      throw Exception(e.toString());
+    }
   }
 }

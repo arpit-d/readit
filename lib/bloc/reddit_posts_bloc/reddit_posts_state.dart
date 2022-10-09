@@ -18,4 +18,11 @@ class LoadedRedditPostsSuccessfully extends RedditPostsState {
   List<Object> get props => [redditPosts];
 }
 
-class RedditPostsFailed extends RedditPostsState {}
+class RedditPostsFailed extends RedditPostsState {
+  final String failedMessage;
+
+  RedditPostsFailed({required this.failedMessage});
+
+  @override
+  List<Object> get props => [failedMessage];
+}

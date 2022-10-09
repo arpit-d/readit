@@ -16,9 +16,12 @@ class RedditPostsRepository {
   Future<RedditPostsModel> getRedditPosts(int postLimit) async {
     try {
       final redditPostsResponse =
-          await _redditPostsService.fetchRedditPosts(postLimit);
-      return RedditPostsModel.fromJson(
-          jsonDecode(redditPostsResponse) as Map<String, dynamic>);
+          jsonDecode(await _redditPostsService.fetchRedditPosts(postLimit))
+              as Map<String, dynamic>;
+      if (redditPostsResponse.containsKey('error')) {
+        throw Exception(redditPostsResponse['message']);
+      }
+      return RedditPostsModel.fromJson(redditPostsResponse);
     } catch (e) {
       log(e.toString());
       throw Exception(e.toString());

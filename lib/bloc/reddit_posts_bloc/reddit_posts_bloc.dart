@@ -26,7 +26,7 @@ class RedditPostsBloc extends Bloc<RedditPostsEvent, RedditPostsState> {
       log(postLimit.toString());
     } catch (e) {
       log(e.toString());
-      emit(RedditPostsFailed());
+      emit(RedditPostsFailed(failedMessage: e.toString().substring(11)));
     }
   }
 }
