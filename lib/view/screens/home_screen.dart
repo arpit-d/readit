@@ -276,7 +276,7 @@ class LeftSidePanel extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.all(16),
+      padding: EdgeInsets.fromLTRB(16, 16, 0, 0),
       width: MediaQuery.of(context).size.width * 0.2,
       child: ListView.separated(
           separatorBuilder: (context, index) => SizedBox(
