@@ -72,7 +72,7 @@ class SubredditListModelData {
 
   factory SubredditListModelData.fromJson(Map<String, dynamic> json) =>
       SubredditListModelData(
-        after: json["after"] as String,
+        after: (json["after"] ?? '') as String,
         dist: json["dist"] as int,
         modhash: (json["modhash"] ?? '') as String,
         geoFilter: json["geo_filter"] as String,

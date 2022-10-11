@@ -33,7 +33,7 @@ class RedditAuthenticator {
   Future<void> authenticateUser() async {
     final randomStateString = generateRandomString(16);
     final url =
-        '$_redditApiUrl/authorize?client_id=$CLIENT_ID&response_type=code&state=$randomStateString&redirect_uri=$_uriRedirect/&duration=permanent&scope=$_scopeIdentities';
+        '$_redditApiUrl/${Platform.isWindows ? 'authorize' : 'authorize.compact'}?client_id=$CLIENT_ID&response_type=code&state=$randomStateString&redirect_uri=$_uriRedirect/&duration=permanent&scope=$_scopeIdentities';
     if (await canLaunchUrl(Uri.parse(url))) {
       launchUrl(
         Uri.parse(url),
