@@ -11,8 +11,10 @@ class LoadingRedditPosts extends RedditPostsState {}
 
 class LoadedRedditPostsSuccessfully extends RedditPostsState {
   final RedditPostsModel redditPosts;
+  final SubredditListModel subscribedSubredditList;
 
-  LoadedRedditPostsSuccessfully(this.redditPosts);
+  LoadedRedditPostsSuccessfully(
+      {required this.redditPosts, required this.subscribedSubredditList});
 
   @override
   List<Object> get props => [redditPosts];

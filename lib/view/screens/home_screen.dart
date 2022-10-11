@@ -6,6 +6,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:readit/bloc/reddit_posts_bloc/reddit_posts_bloc.dart';
 import 'package:readit/core/utils/snackbars.dart';
 import 'package:readit/models/reddit_posts_model.dart';
+import 'package:readit/models/subreddits_list_model.dart' as sb;
 
 import '../../bloc/auth_bloc/auth_bloc.dart';
 
@@ -69,57 +70,25 @@ class _HomeScreenState extends State<HomeScreen> {
         builder: (context, state) {
           if (state is LoadedRedditPostsSuccessfully) {
             //TODO: Split into separate widgets
-            return Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                LeftSidePanel(),
-                Container(
-                  color: Colors.white,
-                  width: MediaQuery.of(context).size.width * 0.6,
-                  child: ListView.separated(
-                      controller: _scrollController,
-                      separatorBuilder: (context, index) => SizedBox(
-                            height: 12,
-                          ),
-                      itemCount: state.redditPosts.data.children.length,
-                      itemBuilder: (context, index) {
-                        final post = state.redditPosts.data.children[index];
-                        log('Length' +
-                            state.redditPosts.data.children.length.toString());
-                        return index >= state.redditPosts.data.children.length
-                            ? LoadingIndicator()
-                            : SizedBox(
-                                height:
-                                    MediaQuery.of(context).size.height * 0.18,
-                                child: InkWell(
-                                  onTap: () {},
-                                  mouseCursor:
-                                      MaterialStateMouseCursor.clickable,
-                                  child: Card(
-                                    shadowColor: Colors.white,
-                                    shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.all(
-                                      Radius.circular(4),
-                                    )),
-                                    elevation: 12,
-                                    child: Row(
-                                      children: [
-                                        postImageData(context, post),
-                                        PostTextData(post: post),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                              );
-                      }),
-                ),
-                Container(
-                  width: MediaQuery.of(context).size.width * 0.2,
-                  // color: Colors.black,
-                ),
-              ],
-            );
+
+            return LayoutBuilder(builder: (context, constraints) {
+              if (constraints.maxWidth < 600) {
+                return postsList(context, state, constraints);
+              }
+              final subscribedSubredditList = state.subscribedSubredditList;
+              return Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  LeftSidePanel(state: subscribedSubredditList),
+                  postsList(context, state, constraints),
+                  Container(
+                    width: MediaQuery.of(context).size.width * 0.2,
+                    // color: Colors.black,
+                  ),
+                ],
+              );
+            });
           }
           if (state is RedditPostsFailed) {
             final errorState = state.failedMessage;
@@ -156,15 +125,60 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Container postImageData(BuildContext context, Child post) {
+  Container postsList(BuildContext context, LoadedRedditPostsSuccessfully state,
+      BoxConstraints constraints) {
     return Container(
-      padding: EdgeInsets.all(12),
+      color: Colors.white,
+      width: constraints.maxWidth < 600
+          ? double.infinity
+          : MediaQuery.of(context).size.width * 0.6,
+      child: ListView.separated(
+          controller: _scrollController,
+          separatorBuilder: (context, index) => SizedBox(
+                height: constraints.maxWidth < 600 ? 6 : 8,
+              ),
+          itemCount: state.redditPosts.data.children.length,
+          itemBuilder: (context, index) {
+            final post = state.redditPosts.data.children[index];
+            return index >= state.redditPosts.data.children.length
+                ? LoadingIndicator()
+                : SizedBox(
+                    height: MediaQuery.of(context).size.height * 0.18,
+                    child: InkWell(
+                      onTap: () {},
+                      mouseCursor: MaterialStateMouseCursor.clickable,
+                      child: Card(
+                        shadowColor: Colors.white,
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.all(
+                          Radius.circular(4),
+                        )),
+                        elevation: 12,
+                        child: Row(
+                          children: [
+                            postImageData(context, post, constraints),
+                            PostTextData(post: post),
+                          ],
+                        ),
+                      ),
+                    ),
+                  );
+          }),
+    );
+  }
+
+  Container postImageData(
+      BuildContext context, Child post, BoxConstraints constraints) {
+    return Container(
       // height:
       //     MediaQuery.of(context).size.height * 0.16,
-      width: MediaQuery.of(context).size.height * 0.25,
+      width: constraints.maxWidth < 600
+          ? MediaQuery.of(context).size.height * 0.15
+          : MediaQuery.of(context).size.height * 0.25,
       child: post.data.url_overridden_by_dest == null ||
               post.data.thumbnail == 'nsfw' ||
-              post.data.thumbnail == 'default'
+              post.data.thumbnail == 'default' ||
+              post.data.thumbnail == 'spoiler'
           ? Icon(Icons.message)
           : Image.network(
               post.data.url_overridden_by_dest.toString().contains('gfycat')
@@ -180,7 +194,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                   .contains('jpg'))
                       ? post.data.thumbnail.toString()
                       : post.data.url_overridden_by_dest.toString(),
-              // fit: BoxFit.fill,
+              fit: BoxFit.cover,
             ),
     );
   }
@@ -216,7 +230,7 @@ class PostTextData extends StatelessWidget {
   Widget build(BuildContext context) {
     return Flexible(
       child: Container(
-        padding: EdgeInsets.all(12),
+        padding: EdgeInsets.all(8),
         child: Column(
           mainAxisSize: MainAxisSize.max,
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -256,19 +270,60 @@ class LoadingIndicator extends StatelessWidget {
 }
 
 class LeftSidePanel extends StatelessWidget {
-  const LeftSidePanel({
-    Key? key,
-  }) : super(key: key);
+  final sb.SubredditListModel state;
+  const LeftSidePanel({Key? key, required this.state}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Container(
+      padding: EdgeInsets.all(16),
       width: MediaQuery.of(context).size.width * 0.2,
-      child: Column(
-        children: [
-          Text('aa'),
-        ],
-      ),
+      child: ListView.separated(
+          separatorBuilder: (context, index) => SizedBox(
+                height: 16,
+              ),
+          itemCount: state.data.children.length,
+          itemBuilder: (context, index) {
+            final subscribedSubreddit = state.data.children[index];
+            final pos = subscribedSubreddit.data.communityIcon!.indexOf('?');
+            final slicedCommunityIconLink = (pos != -1
+                ? subscribedSubreddit.data.communityIcon!.substring(0, pos)
+                : null);
+            return Row(
+              children: [
+                CircleAvatar(
+                  backgroundColor: slicedCommunityIconLink == null
+                      ? Colors.blue
+                      : Colors.white,
+                  radius: 24,
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(100.0),
+                    child: slicedCommunityIconLink == null
+                        ? Text(
+                            'R',
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
+                              fontSize: 18,
+                            ),
+                          )
+                        : Image.network(
+                            slicedCommunityIconLink,
+                            fit: BoxFit.fill,
+                          ),
+                  ),
+                ),
+                SizedBox(width: 16),
+                Flexible(
+                  child: Text(
+                    subscribedSubreddit.data.displayName,
+                    overflow: TextOverflow.ellipsis,
+                    maxLines: 2,
+                  ),
+                ),
+              ],
+            );
+          }),
     );
   }
 }
