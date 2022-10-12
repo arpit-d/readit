@@ -7,6 +7,7 @@ import 'package:readit/bloc/reddit_posts_bloc/reddit_posts_bloc.dart';
 import 'package:readit/core/utils/snackbars.dart';
 import 'package:readit/models/reddit_posts_model.dart';
 import 'package:readit/models/subreddits_list_model.dart' as sb;
+import 'package:readit/view/screens/image_viewer.dart';
 
 import '../../bloc/auth_bloc/auth_bloc.dart';
 
@@ -180,21 +181,50 @@ class _HomeScreenState extends State<HomeScreen> {
               post.data.thumbnail == 'default' ||
               post.data.thumbnail == 'spoiler'
           ? Icon(Icons.message)
-          : Image.network(
-              post.data.url_overridden_by_dest.toString().contains('gfycat')
-                  ? post.data.url_overridden_by_dest.toString() + '.gif'
-                  : post.data.url_overridden_by_dest
-                              .toString()
-                              .contains('v.redd.it') ||
-                          (!post.data.url_overridden_by_dest
+          // TODO: Clean this up
+          : InkWell(
+              onTap: () => Navigator.of(context).push(
+                MaterialPageRoute<void>(
+                  builder: (BuildContext context) => ImageViewer(
+                    heroID: '${post.data.author}',
+                    photoURL: post.data.url_overridden_by_dest
+                            .toString()
+                            .contains('gfycat')
+                        ? post.data.url_overridden_by_dest.toString() + '.gif'
+                        : post.data.url_overridden_by_dest
+                                    .toString()
+                                    .contains('v.redd.it') ||
+                                (!post.data.url_overridden_by_dest
+                                        .toString()
+                                        .contains('jpg') &&
+                                    !post.data.url_overridden_by_dest
+                                        .toString()
+                                        .contains('jpg'))
+                            ? post.data.thumbnail.toString()
+                            : post.data.url_overridden_by_dest.toString(),
+                  ),
+                ),
+              ),
+              child: Hero(
+                //TODO: Maybe check for different tag id?
+                tag: '${post.data.author}',
+                child: Image.network(
+                  post.data.url_overridden_by_dest.toString().contains('gfycat')
+                      ? post.data.url_overridden_by_dest.toString() + '.gif'
+                      : post.data.url_overridden_by_dest
                                   .toString()
-                                  .contains('jpg') &&
-                              !post.data.url_overridden_by_dest
-                                  .toString()
-                                  .contains('jpg'))
-                      ? post.data.thumbnail.toString()
-                      : post.data.url_overridden_by_dest.toString(),
-              fit: BoxFit.cover,
+                                  .contains('v.redd.it') ||
+                              (!post.data.url_overridden_by_dest
+                                      .toString()
+                                      .contains('jpg') &&
+                                  !post.data.url_overridden_by_dest
+                                      .toString()
+                                      .contains('jpg'))
+                          ? post.data.thumbnail.toString()
+                          : post.data.url_overridden_by_dest.toString(),
+                  fit: BoxFit.cover,
+                ),
+              ),
             ),
     );
   }
