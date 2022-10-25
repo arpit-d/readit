@@ -11,6 +11,8 @@ import 'package:readit/view/screens/image_viewer.dart';
 
 import '../../bloc/auth_bloc/auth_bloc.dart';
 
+enum Menu { itemOne, itemTwo, itemThree, itemFour }
+
 class HomeScreen extends StatefulWidget {
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -24,6 +26,7 @@ class _HomeScreenState extends State<HomeScreen> {
     super.initState();
   }
 
+  String _selectedMenu = '';
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -32,6 +35,34 @@ class _HomeScreenState extends State<HomeScreen> {
         backgroundColor: Colors.white,
         elevation: 0,
         actions: [
+          PopupMenuButton<Menu>(
+              child: CircleAvatar(),
+              onSelected: (Menu item) {
+                setState(() {
+                  _selectedMenu = item.name;
+                });
+              },
+              itemBuilder: (BuildContext context) => <PopupMenuEntry<Menu>>[
+                    const PopupMenuItem<Menu>(
+                      value: Menu.itemOne,
+                      child: Text('Item 1'),
+                    ),
+                    const PopupMenuItem<Menu>(
+                      value: Menu.itemTwo,
+                      child: Text('Item 2'),
+                    ),
+                    const PopupMenuItem<Menu>(
+                      value: Menu.itemThree,
+                      child: Text('Item 3'),
+                    ),
+                    const PopupMenuItem<Menu>(
+                      value: Menu.itemFour,
+                      child: Text('Item 4'),
+                    ),
+                  ]),
+          SizedBox(
+            width: 12,
+          ),
           ElevatedButton(
             style: ButtonStyle(
               backgroundColor: MaterialStatePropertyAll(

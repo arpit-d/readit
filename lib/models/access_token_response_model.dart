@@ -4,14 +4,14 @@ import 'dart:convert';
 class AccessTokenResponseModel {
   final String accessToken;
   final String tokenType;
-  final DateTime expiresIn;
+  final String tokenLastUpdated;
   final String refreshToken;
   final String scope;
 
   AccessTokenResponseModel(
       {required this.accessToken,
       required this.tokenType,
-      required this.expiresIn,
+      required this.tokenLastUpdated,
       required this.refreshToken,
       required this.scope});
 
@@ -19,7 +19,7 @@ class AccessTokenResponseModel {
     return <String, dynamic>{
       'access_token': accessToken,
       'token_type': tokenType,
-      'expires_in': expiresIn.millisecondsSinceEpoch,
+      'token_last_updated': tokenLastUpdated,
       'refresh_token': refreshToken,
       'scope': scope,
     };
@@ -29,7 +29,7 @@ class AccessTokenResponseModel {
     return AccessTokenResponseModel(
       accessToken: map['access_token'] as String,
       tokenType: map['token_type'] as String,
-      expiresIn: DateTime.fromMillisecondsSinceEpoch(map['expires_in'] as int),
+      tokenLastUpdated: DateTime.now().toString(),
       refreshToken: map['refresh_token'] as String,
       scope: map['scope'] as String,
     );
@@ -40,4 +40,19 @@ class AccessTokenResponseModel {
   factory AccessTokenResponseModel.fromJson(String source) =>
       AccessTokenResponseModel.fromMap(
           jsonDecode(source) as Map<String, dynamic>);
+
+  AccessTokenResponseModel copyWith({AccessTokenResponseModel? data}) {
+    return AccessTokenResponseModel(
+      accessToken: data?.accessToken ?? this.accessToken,
+      tokenType: data?.tokenType ?? this.tokenType,
+      tokenLastUpdated: data?.tokenLastUpdated ?? this.tokenLastUpdated,
+      refreshToken: data?.refreshToken ?? this.refreshToken,
+      scope: data?.scope ?? this.scope,
+    );
+  }
+
+  @override
+  String toString() {
+    return 'AccessTokenResponseModel(accessToken: $accessToken, tokenType: $tokenType, tokenLastUpdated: $tokenLastUpdated, refreshToken: $refreshToken, scope: $scope)';
+  }
 }

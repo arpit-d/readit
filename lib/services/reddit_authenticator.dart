@@ -42,8 +42,8 @@ class RedditAuthenticator {
       try {
         dev.log('Launching authentication URL in browser');
         final accessCode = await retrieveCodeFromServer(randomStateString);
-        final accessToken = await retrieveAccessToken(accessCode);
-        print(accessToken.expiresIn.millisecondsSinceEpoch);
+        final responseData = await retrieveAccessToken(accessCode);
+        await _credentialsStorage.save(responseData);
       } catch (e) {
         rethrow;
       }
@@ -88,8 +88,8 @@ class RedditAuthenticator {
     return onCode.stream.first;
   }
 
-  Future<AccessTokenResponseModel> retrieveAccessToken(
-      String accessCode) async {
+  Future<AccessTokenResponseModel> retrieveAccessToken(String accessCode,
+      [String? refreshTokenBody]) async {
     const user = CLIENT_ID;
     const password = '';
 
@@ -100,14 +100,14 @@ class RedditAuthenticator {
         'Authorization': basicAuth,
         'Content-Type': 'application/x-www-form-urlencoded',
       },
-      body:
+      body: refreshTokenBody ??
           'grant_type=authorization_code&code=$accessCode&redirect_uri=http://localhost:8080/',
     );
     if (response.statusCode == 200) {
       dev.log('RESPONSE STATUS CODE: ${response.statusCode}');
       final responseData =
           AccessTokenResponseModel.fromJson(response.body.toString());
-      await _credentialsStorage.save(responseData);
+      dev.log(responseData.toString());
       return responseData;
     } else {
       throw Exception('Couldn\'t retrieve Access Token');
@@ -123,6 +123,19 @@ class RedditAuthenticator {
       final storedCredentials = await _credentialsStorage.read();
       if (storedCredentials != null) {
         dev.log('Returning accessToken from storage');
+        final refreshNeeded = checkIfRefreshNeeded(storedCredentials);
+        if (refreshNeeded) {
+          dev.log('Refreshing token with ' + storedCredentials.refreshToken);
+          final responseDataAfterTokenRefresh = await retrieveAccessToken(
+              storedCredentials.accessToken,
+              'grant_type=refresh_token&refresh_token=${storedCredentials.refreshToken}');
+          await _credentialsStorage.save(responseDataAfterTokenRefresh.copyWith(
+              data: responseDataAfterTokenRefresh));
+          dev.log((responseDataAfterTokenRefresh
+              .copyWith(data: responseDataAfterTokenRefresh)
+              .toString()));
+          return _accessToken = responseDataAfterTokenRefresh.accessToken;
+        }
         return _accessToken = storedCredentials.accessToken;
       }
       dev.log('No accessToken found, returning null');
@@ -158,5 +171,17 @@ class RedditAuthenticator {
       ..write(
         '<html><meta name="viewport" content="width=device-width, initial-scale=1.0"><body> <h2 style="text-align: center; position: absolute; top: 50%; left: 50%: right: 50%">$text1</h2><h3>$text2<script type="javascript">window.close()</script> </h3></body></html>',
       );
+  }
+
+  bool checkIfRefreshNeeded(AccessTokenResponseModel storedCredentials) {
+    final formatedLastUpdated =
+        DateTime.parse(storedCredentials.tokenLastUpdated);
+
+    if ((DateTime.now().difference(formatedLastUpdated)).inMinutes > 50) {
+      dev.log('Access token refresh needed!');
+      return true;
+    }
+    dev.log('No refresh necessary!');
+    return false;
   }
 }
