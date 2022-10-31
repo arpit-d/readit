@@ -298,7 +298,7 @@ class PostTextData extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
-              post.data.title,
+              post.data.title.replaceAll('&amp;', '&'),
               overflow: TextOverflow.ellipsis,
               maxLines: 2,
             ),
