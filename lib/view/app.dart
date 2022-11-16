@@ -11,13 +11,14 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:readit/bloc/auth_bloc/auth_bloc.dart';
 import 'package:readit/bloc/reddit_posts_bloc/reddit_posts_bloc.dart';
 import 'package:readit/core/locator.dart';
+import 'package:readit/core/theme/custom_theme.dart';
 import 'package:readit/l10n/l10n.dart';
-import 'package:readit/repository/authentication_repository.dart';
 import 'package:readit/repository/reddit_posts_repository.dart';
 import 'package:readit/view/screens/home_screen.dart';
 import 'package:readit/view/sign_up_page.dart';
 
 import '../core/utils/snackbars.dart';
+import '../core/routing.dart';
 
 class ReaditApp extends StatefulWidget {
   const ReaditApp({super.key});
@@ -34,26 +35,22 @@ class _ReaditAppState extends State<ReaditApp> {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return MaterialApp.router(
+      routerConfig: router,
       debugShowCheckedModeBanner: false,
-      // theme: ThemeData(
-      //   appBarTheme: const AppBarTheme(color: Color(0xFFe80040)),
-      //   colorScheme: ColorScheme.fromSwatch(
-      //     accentColor: const Color(0xFF5956ed),
-      //   ),
-      // ),
       localizationsDelegates: const [
         AppLocalizations.delegate,
         GlobalMaterialLocalizations.delegate,
       ],
+      theme: CustomTheme.lightTheme,
       supportedLocales: AppLocalizations.supportedLocales,
-      home: BlocProvider<AuthBloc>(
-        lazy: false,
-        create: (BuildContext context) =>
-            AuthBloc(locator.get<AuthenticationRepository>())
-              ..add(CheckAuthStatusEvent()),
-        child: AuthWrapper(),
-      ),
+      // home: BlocProvider<AuthBloc>(
+      //   lazy: false,
+      //   create: (BuildContext context) =>
+      //       AuthBloc(locator.get<AuthenticationRepository>())
+      //         ..add(CheckAuthStatusEvent()),
+      //   child: AuthWrapper(),
+      // ),
     );
   }
 }

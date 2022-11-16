@@ -17,15 +17,10 @@ class ProfilePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xFF1f1d28),
+      // backgroundColor: Color(0xFF1f1d28),
       appBar: AppBar(
         actions: [
           ElevatedButton(
-            style: ButtonStyle(
-              backgroundColor: MaterialStatePropertyAll(
-                Theme.of(context).colorScheme.secondary,
-              ),
-            ),
             onPressed: () => context.read<AuthBloc>().add(AuthSignOutEvent()),
             child: Text('Sign Out'),
           ),
@@ -61,11 +56,11 @@ class ProfilePage extends StatelessWidget {
                   ),
                   Text(
                     '${data.name}',
-                    style: TextStyle(color: Colors.white),
+                    //  style: TextStyle(color: Colors.white),
                   ),
                   Text(
                     '${data.totalKarma}',
-                    style: TextStyle(color: Colors.white),
+//style: TextStyle(color: Colors.white),
                   ),
                 ],
               ),

@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:go_router/go_router.dart';
 import 'package:readit/bloc/reddit_posts_bloc/reddit_posts_bloc.dart';
 import 'package:readit/core/utils/snackbars.dart';
 import 'package:readit/models/reddit_posts_model.dart';
@@ -43,32 +44,16 @@ class _HomeScreenState extends State<HomeScreen> {
                 });
               },
               itemBuilder: (BuildContext context) => <PopupMenuEntry<Menu>>[
-                    const PopupMenuItem<Menu>(
+                    PopupMenuItem<Menu>(
                       value: Menu.itemOne,
-                      child: Text('Item 1'),
-                    ),
-                    const PopupMenuItem<Menu>(
-                      value: Menu.itemTwo,
-                      child: Text('Item 2'),
-                    ),
-                    const PopupMenuItem<Menu>(
-                      value: Menu.itemThree,
-                      child: Text('Item 3'),
-                    ),
-                    const PopupMenuItem<Menu>(
-                      value: Menu.itemFour,
-                      child: Text('Item 4'),
+                      child: Text('Profile'),
+                      onTap: () => context.go("/profile"),
                     ),
                   ]),
           SizedBox(
             width: 12,
           ),
           ElevatedButton(
-            style: ButtonStyle(
-              backgroundColor: MaterialStatePropertyAll(
-                Theme.of(context).colorScheme.secondary,
-              ),
-            ),
             onPressed: () => context.read<AuthBloc>().add(AuthSignOutEvent()),
             child: Text('Sign Out'),
           ),
@@ -354,7 +339,7 @@ class LeftSidePanel extends StatelessWidget {
               children: [
                 CircleAvatar(
                   backgroundColor: slicedCommunityIconLink == null
-                      ? Colors.blue
+                      ? Theme.of(context).primaryColor
                       : Colors.white,
                   radius: 24,
                   child: ClipRRect(
