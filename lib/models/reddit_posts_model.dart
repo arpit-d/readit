@@ -196,6 +196,7 @@ class ChildData {
       required this.title,
       required this.selftext,
       this.thumbnail,
+      required this.linkFlairText,
       this.url_overridden_by_dest});
 
   final String subredditId;
@@ -207,7 +208,7 @@ class ChildData {
   final dynamic bannedBy;
   final int ups;
   final dynamic numReports;
-
+  final String? linkFlairText;
   final int totalAwardsReceived;
   final String subreddit;
   final String linkAuthor;
@@ -343,8 +344,10 @@ class ChildData {
           String? linkUrl,
           String? authorFlairTemplateId,
           thumbnail,
+          String? linkFlairText,
           String? title}) =>
       ChildData(
+        linkFlairText: linkFlairText ?? this.linkFlairText,
         url_overridden_by_dest:
             url_overridden_by_dest ?? this.url_overridden_by_dest,
         title: title ?? this.title,
@@ -429,6 +432,9 @@ class ChildData {
     final convertedDate = convertDate(t);
 
     return ChildData(
+        linkFlairText: (json['link_flair_text']) == null
+            ? null
+            : (json['link_flair_text'] as String),
         url_overridden_by_dest: json['url_overridden_by_dest'],
         thumbnail: json['thumbnail'],
         title: json['title'] as String,

@@ -14,6 +14,7 @@ class ImageViewer extends StatelessWidget {
     return GestureDetector(
       onTap: () => Navigator.of(context).pop(),
       child: Scaffold(
+        extendBodyBehindAppBar: true,
         appBar: AppBar(
           backgroundColor: Colors.transparent,
         ),
@@ -22,7 +23,7 @@ class ImageViewer extends StatelessWidget {
           child: Center(
             child: Hero(
               tag: heroID,
-              child: Container(
+              child: SizedBox.expand(
                 child: Image.network(photoURL),
               ),
             ),

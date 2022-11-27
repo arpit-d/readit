@@ -7,7 +7,7 @@ class CustomTheme {
   static ThemeData get lightTheme {
     return ThemeData(
         visualDensity: VisualDensity.adaptivePlatformDensity,
-        primaryColor: CustomColors.primary,
+        primaryColor: CustomColors.primarySecond,
         scaffoldBackgroundColor: Color(0xFFE5E5E5),
         textTheme: GoogleFonts.ibmPlexSansTextTheme(),
         scrollbarTheme: ScrollbarThemeData(

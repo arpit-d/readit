@@ -6,6 +6,7 @@
 // https://opensource.org/licenses/MIT.
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:readit/bloc/auth_bloc/auth_bloc.dart';
@@ -30,6 +31,9 @@ class ReaditApp extends StatefulWidget {
 class _ReaditAppState extends State<ReaditApp> {
   @override
   void initState() {
+    SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
+      statusBarColor: Colors.transparent, // or any color you want
+    ));
     super.initState();
   }
 

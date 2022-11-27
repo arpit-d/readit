@@ -23,7 +23,7 @@ ScaffoldMessengerState showSnackbar(
           ),
         ),
         behavior: SnackBarBehavior.floating,
-        backgroundColor: Theme.of(context).colorScheme.secondary,
+        backgroundColor: Theme.of(context).primaryColor,
       ),
     );
 }

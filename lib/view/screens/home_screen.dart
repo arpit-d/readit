@@ -27,6 +27,13 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      floatingActionButton: FloatingActionButton(
+        backgroundColor: Theme.of(context).primaryColor,
+        child: Icon(
+          Icons.add,
+        ),
+        onPressed: () {},
+      ),
       drawer: MediaQuery.of(context).size.width < 600 ? Drawer() : null,
       appBar: customAppbar(context),
       body: BlocConsumer<RedditPostsBloc, RedditPostsState>(
@@ -106,7 +113,10 @@ class _HomeScreenState extends State<HomeScreen> {
       centerTitle: true,
       title: Text(
         'R E A D I T',
-        style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+        style: TextStyle(
+          color: Colors.black,
+          fontWeight: FontWeight.bold,
+        ),
       ),
       actions: [
         PopupMenuButton<Menu>(
@@ -170,18 +180,55 @@ class _HomeScreenState extends State<HomeScreen> {
               child: InkWell(
                 onTap: () {},
                 mouseCursor: MaterialStateMouseCursor.clickable,
-                child: Row(
-                  crossAxisAlignment: post.data.url_overridden_by_dest ==
-                              null ||
-                          post.data.thumbnail == 'nsfw' ||
-                          post.data.thumbnail == 'default' ||
-                          post.data.thumbnail == 'spoiler'
-                      ? CrossAxisAlignment.center //to center the msg box icon
-                      : CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.start,
+                child: Column(
                   children: [
-                    postImageData(context, post, constraints),
-                    PostTextData(post: post),
+                    Row(
+                      crossAxisAlignment:
+                          post.data.url_overridden_by_dest == null ||
+                                  post.data.thumbnail == 'nsfw' ||
+                                  post.data.thumbnail == 'default' ||
+                                  post.data.thumbnail == 'spoiler'
+                              ? CrossAxisAlignment
+                                  .center //to center the msg box icon
+                              : CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        postImageData(context, post, constraints),
+                        PostTextData(post: post),
+                      ],
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            '${post.data.score} points',
+                          ),
+                          Text(
+                            '${post.data.numComments} comments',
+                          ),
+                          IconButton(
+                            onPressed: () {},
+                            icon: Icon(Icons.arrow_upward_outlined),
+                            padding: EdgeInsets.zero,
+                            constraints: BoxConstraints(),
+                          ),
+                          IconButton(
+                            onPressed: () {},
+                            icon: Icon(Icons.arrow_downward_outlined),
+                            padding: EdgeInsets.zero,
+                            constraints: BoxConstraints(),
+                          ),
+                          IconButton(
+                            onPressed: () {},
+                            icon: Icon(Icons.bookmark_outline_outlined),
+                            padding: EdgeInsets.zero,
+                            constraints: BoxConstraints(),
+                          ),
+                        ],
+                      ),
+                    )
                   ],
                 ),
               ),
@@ -230,8 +277,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ),
               child: Hero(
-                //TODO: Maybe check for different tag id?
-                tag: '${post.data.author}',
+                tag: '${post.data.id}',
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(8),
                   child: Image.network(
@@ -308,10 +354,20 @@ class PostTextData extends StatelessWidget {
               children: [
                 Text(
                   post.data.subredditNamePrefixed + ' ',
+                  style: TextStyle(
+                    color: Theme.of(context).primaryColor,
+                  ),
                 ),
                 Text(
                   '• ' + post.data.author,
                 ),
+                if (post.data.linkFlairText != null)
+                  Text(
+                    ' • ' + post.data.linkFlairText!,
+                    style: TextStyle(
+                      color: Theme.of(context).primaryColor,
+                    ),
+                  ),
               ],
             ),
           ],
