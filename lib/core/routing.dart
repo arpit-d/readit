@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:readit/repository/user_data_repository.dart';
-import 'package:readit/view/profile_page.dart';
+import 'package:readit/view/screens/profile_page.dart';
 
 import '../bloc/auth_bloc/auth_bloc.dart';
 import '../cubit/user_data_cubit.dart';

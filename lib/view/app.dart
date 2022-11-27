@@ -14,11 +14,11 @@ import 'package:readit/core/locator.dart';
 import 'package:readit/core/theme/custom_theme.dart';
 import 'package:readit/l10n/l10n.dart';
 import 'package:readit/repository/reddit_posts_repository.dart';
-import 'package:readit/view/screens/home_screen.dart';
-import 'package:readit/view/sign_up_page.dart';
+import 'package:readit/view/screens/sign_up_page.dart';
 
 import '../core/utils/snackbars.dart';
 import '../core/routing.dart';
+import 'screens/home_screen.dart';
 
 class ReaditApp extends StatefulWidget {
   const ReaditApp({super.key});

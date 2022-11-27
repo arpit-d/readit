@@ -1,8 +1,5 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:readit/bloc/reddit_posts_bloc/reddit_posts_bloc.dart';
 import 'package:readit/core/utils/snackbars.dart';
@@ -12,7 +9,7 @@ import 'package:readit/view/screens/image_viewer.dart';
 
 import '../../bloc/auth_bloc/auth_bloc.dart';
 
-enum Menu { itemOne, itemTwo, itemThree, itemFour }
+enum Menu { profile, settings, signOut }
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -20,56 +17,18 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  final ScrollController _scrollController = ScrollController();
-  @override
-  void initState() {
-    _scrollController.addListener(_onScroll);
-    super.initState();
-  }
+  // final ScrollController _scrollController = ScrollController();
+  // @override
+  // void initState() {
+  //   _scrollController.addListener(_onScroll);
+  //   super.initState();
+  // }
 
-  String _selectedMenu = '';
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      //  backgroundColor: Color(0xFF1f1d28),
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 0,
-        actions: [
-          PopupMenuButton<Menu>(
-              child: CircleAvatar(),
-              onSelected: (Menu item) {
-                setState(() {
-                  _selectedMenu = item.name;
-                });
-              },
-              itemBuilder: (BuildContext context) => <PopupMenuEntry<Menu>>[
-                    PopupMenuItem<Menu>(
-                      value: Menu.itemOne,
-                      child: Text('Profile'),
-                      onTap: () => context.go("/profile"),
-                    ),
-                  ]),
-          SizedBox(
-            width: 12,
-          ),
-          ElevatedButton(
-            onPressed: () => context.read<AuthBloc>().add(AuthSignOutEvent()),
-            child: Text('Sign Out'),
-          ),
-        ],
-        leadingWidth: 150,
-        leading: Container(
-          padding: EdgeInsets.only(left: 12),
-          height: 48,
-          width: double.infinity,
-          child: SvgPicture.asset(
-            'assets/reddit_logo.svg',
-            semanticsLabel: 'Reddit Logo',
-            fit: BoxFit.contain,
-          ),
-        ),
-      ),
+      drawer: MediaQuery.of(context).size.width < 600 ? Drawer() : null,
+      appBar: customAppbar(context),
       body: BlocConsumer<RedditPostsBloc, RedditPostsState>(
         buildWhen: (previous, current) => previous != current,
         listener: (context, state) {
@@ -142,44 +101,91 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
+  AppBar customAppbar(BuildContext context) {
+    return AppBar(
+      centerTitle: true,
+      title: Text(
+        'R E A D I T',
+        style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+      ),
+      actions: [
+        PopupMenuButton<Menu>(
+          child: CircleAvatar(),
+          itemBuilder: (BuildContext context) => <PopupMenuEntry<Menu>>[
+            PopupMenuItem<Menu>(
+              value: Menu.profile,
+              child: Text('Profile'),
+              onTap: () => context.go("/profile"),
+            ),
+            PopupMenuItem<Menu>(
+              value: Menu.signOut,
+              child: Text('Sign Out'),
+              onTap: () => context.read<AuthBloc>().add(AuthSignOutEvent()),
+            ),
+          ],
+        ),
+        SizedBox(
+          width: 12,
+        ),
+        // ElevatedButton(
+        //   onPressed: () => context.read<AuthBloc>().add(AuthSignOutEvent()),
+        //   child: Text('Sign Out'),
+        // ),
+      ],
+      // leadingWidth: 150,
+      // leading: Container(
+      //   padding: EdgeInsets.only(left: 12),
+      //   height: 48,
+      //   width: double.infinity,
+      //   child: SvgPicture.asset(
+      //     'assets/reddit_logo.svg',
+      //     semanticsLabel: 'Reddit Logo',
+      //     fit: BoxFit.contain,
+      //   ),
+      // ),
+    );
+  }
+
   Container postsList(BuildContext context, LoadedRedditPostsSuccessfully state,
       BoxConstraints constraints) {
     return Container(
-      color: Colors.white,
       width: constraints.maxWidth < 600
           ? double.infinity
           : MediaQuery.of(context).size.width * 0.6,
       child: ListView.separated(
-          controller: _scrollController,
+          //  controller: _scrollController,
           separatorBuilder: (context, index) => SizedBox(
                 height: constraints.maxWidth < 600 ? 6 : 8,
               ),
           itemCount: state.redditPosts.data.children.length,
           itemBuilder: (context, index) {
             final post = state.redditPosts.data.children[index];
-            return index >= state.redditPosts.data.children.length
-                ? LoadingIndicator()
-                : SizedBox(
-                    height: MediaQuery.of(context).size.height * 0.18,
-                    child: InkWell(
-                      onTap: () {},
-                      mouseCursor: MaterialStateMouseCursor.clickable,
-                      child: Card(
-                        shadowColor: Colors.white,
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.all(
-                          Radius.circular(4),
-                        )),
-                        elevation: 12,
-                        child: Row(
-                          children: [
-                            postImageData(context, post, constraints),
-                            PostTextData(post: post),
-                          ],
-                        ),
-                      ),
-                    ),
-                  );
+            return Card(
+              shadowColor: Colors.white,
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.all(
+                Radius.circular(8),
+              )),
+              elevation: 0,
+              child: InkWell(
+                onTap: () {},
+                mouseCursor: MaterialStateMouseCursor.clickable,
+                child: Row(
+                  crossAxisAlignment: post.data.url_overridden_by_dest ==
+                              null ||
+                          post.data.thumbnail == 'nsfw' ||
+                          post.data.thumbnail == 'default' ||
+                          post.data.thumbnail == 'spoiler'
+                      ? CrossAxisAlignment.center //to center the msg box icon
+                      : CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    postImageData(context, post, constraints),
+                    PostTextData(post: post),
+                  ],
+                ),
+              ),
+            );
           }),
     );
   }
@@ -196,13 +202,15 @@ class _HomeScreenState extends State<HomeScreen> {
               post.data.thumbnail == 'nsfw' ||
               post.data.thumbnail == 'default' ||
               post.data.thumbnail == 'spoiler'
-          ? Icon(Icons.message)
+          ? Center(
+              child: Icon(Icons.message),
+            )
           // TODO: Clean this up
           : InkWell(
               onTap: () => Navigator.of(context).push(
                 MaterialPageRoute<void>(
                   builder: (BuildContext context) => ImageViewer(
-                    heroID: '${post.data.author}',
+                    heroID: '${post.data.id}',
                     photoURL: post.data.url_overridden_by_dest
                             .toString()
                             .contains('gfycat')
@@ -224,44 +232,48 @@ class _HomeScreenState extends State<HomeScreen> {
               child: Hero(
                 //TODO: Maybe check for different tag id?
                 tag: '${post.data.author}',
-                child: Image.network(
-                  post.data.url_overridden_by_dest.toString().contains('gfycat')
-                      ? post.data.url_overridden_by_dest.toString() + '.gif'
-                      : post.data.url_overridden_by_dest
-                                  .toString()
-                                  .contains('v.redd.it') ||
-                              (!post.data.url_overridden_by_dest
-                                      .toString()
-                                      .contains('jpg') &&
-                                  !post.data.url_overridden_by_dest
-                                      .toString()
-                                      .contains('jpg'))
-                          ? post.data.thumbnail.toString()
-                          : post.data.url_overridden_by_dest.toString(),
-                  fit: BoxFit.cover,
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(8),
+                  child: Image.network(
+                    post.data.url_overridden_by_dest
+                            .toString()
+                            .contains('gfycat')
+                        ? post.data.url_overridden_by_dest.toString() + '.gif'
+                        : post.data.url_overridden_by_dest
+                                    .toString()
+                                    .contains('v.redd.it') ||
+                                (!post.data.url_overridden_by_dest
+                                        .toString()
+                                        .contains('jpg') &&
+                                    !post.data.url_overridden_by_dest
+                                        .toString()
+                                        .contains('jpg'))
+                            ? post.data.thumbnail.toString()
+                            : post.data.url_overridden_by_dest.toString(),
+                    fit: BoxFit.fill,
+                  ),
                 ),
               ),
             ),
     );
   }
 
-  void _onScroll() {
-    log(_isBottom.toString());
-    if (_isBottom) context.read<RedditPostsBloc>().add(LoadRedditPosts());
-  }
+  // void _onScroll() {
+  //   if (_isBottom) context.read<RedditPostsBloc>().add(LoadRedditPosts());
+  // }
 
-  bool get _isBottom {
-    if (!_scrollController.hasClients) return false;
-    final maxScroll = _scrollController.position.maxScrollExtent;
-    final currentScroll = _scrollController.offset;
-    return currentScroll >= (maxScroll);
-  }
+  // bool get _isBottom {
+  //   if (!_scrollController.hasClients) return false;
+  //   final maxScroll = _scrollController.position.maxScrollExtent;
+  //   final currentScroll = _scrollController.offset;
+  //   return currentScroll >= (maxScroll);
+  // }
 
-  @override
-  void dispose() {
-    _scrollController.dispose();
-    super.dispose();
-  }
+  // @override
+  // void dispose() {
+  //   _scrollController.dispose();
+  //   super.dispose();
+  // }
 }
 
 class PostTextData extends StatelessWidget {
@@ -278,18 +290,29 @@ class PostTextData extends StatelessWidget {
       child: Container(
         padding: EdgeInsets.all(8),
         child: Column(
-          mainAxisSize: MainAxisSize.max,
+          // mainAxisSize: MainAxisSize.max,
           crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          // mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
               post.data.title.replaceAll('&amp;', '&'),
               overflow: TextOverflow.ellipsis,
-              maxLines: 2,
+              maxLines: 8,
+              style: TextStyle(
+                fontSize: 17,
+                fontWeight: FontWeight.w500,
+              ),
             ),
-            Text(
-              post.data.subredditNamePrefixed + ' • ' + post.data.author,
-              style: TextStyle(),
+            Wrap(
+              crossAxisAlignment: WrapCrossAlignment.start,
+              children: [
+                Text(
+                  post.data.subredditNamePrefixed + ' ',
+                ),
+                Text(
+                  '• ' + post.data.author,
+                ),
+              ],
             ),
           ],
         ),

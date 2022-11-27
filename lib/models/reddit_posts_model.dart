@@ -2,6 +2,7 @@
 import 'dart:convert';
 
 import 'package:equatable/equatable.dart';
+import 'package:intl/intl.dart';
 
 String redditPostsModelToJson(RedditPostsModel data) =>
     json.encode(data.toJson());
@@ -260,7 +261,7 @@ class ChildData {
   final double created;
   final String subredditNamePrefixed;
   final String authorFlairText;
-  final double createdUtc;
+  final String createdUtc;
 
   final bool locked;
   final String authorFlairBackgroundColor;
@@ -332,7 +333,7 @@ class ChildData {
           double? created,
           String? subredditNamePrefixed,
           String? authorFlairText,
-          double? createdUtc,
+          String? createdUtc,
           bool? locked,
           String? selftext,
           String? authorFlairBackgroundColor,
@@ -422,80 +423,86 @@ class ChildData {
         selftext: selftext ?? this.selftext,
       );
 
-  factory ChildData.fromJson(Map<String, dynamic> json) => ChildData(
-      url_overridden_by_dest: json['url_overridden_by_dest'],
-      thumbnail: json['thumbnail'],
-      title: json['title'] as String,
-      subredditId: json["subreddit_id"] as String,
-      approvedAtUtc: json["approved_at_utc"],
-      authorIsBlocked: json["author_is_blocked"] as bool,
-      commentType: json["comment_type"],
-      selftext: (json["selftext"] ?? 'no text') as String,
-      linkTitle: (json["link_title"] ?? '') as String,
-      modReasonBy: json["mod_reason_by"],
-      bannedBy: (json["banned_by"] ?? ''),
-      ups: json["ups"] as int,
-      numReports: json["num_reports"],
-      totalAwardsReceived: json["total_awards_received"] as int,
-      subreddit: json["subreddit"] as String,
-      linkAuthor: (json["link_author"] ?? '') as String,
-      likes: (json["likes"] ?? false) as bool,
-      replies: (json["replies"] ?? '') as String,
-      saved: json["saved"] as bool,
-      id: json["id"] as String,
-      bannedAtUtc: json["banned_at_utc"],
-      modReasonTitle: json["mod_reason_title"],
-      gilded: json["gilded"] as int,
-      archived: json["archived"] as bool,
-      collapsedReasonCode: json["collapsed_reason_code"],
-      noFollow: json["no_follow"] as bool,
-      author: (json["author"] ?? 'No Author') as String,
-      numComments: json["num_comments"] as int,
-      canModPost: json["can_mod_post"] as bool,
-      sendReplies: json["send_replies"] as bool,
-      parentId: (json["parent_id"] ?? '') as String,
-      score: json["score"] as int,
-      authorFullname: (json["author_fullname"] ?? '') as String,
-      over18: json["over_18"] as bool,
-      reportReasons: json["report_reasons"],
-      removalReason: json["removal_reason"],
-      approvedBy: json["approved_by"],
-      controversiality: (json["controversiality"] ?? 0) as int,
-      body: (json["body"] ?? '') as String,
-      edited: json["edited"] as dynamic,
-      topAwardedType: json["top_awarded_type"],
-      downs: json["downs"] as int,
-      authorFlairCssClass: (json["author_flair_css_class"] ?? '') as String,
-      isSubmitter: (json["is_submitter"] ?? false) as bool,
-      collapsed: (json["collapsed"] ?? true) as bool,
-      authorPatreonFlair: (json["author_patreon_flair"] ?? true) as bool,
-      bodyHtml: (json["body_html"] ?? '') as String,
-      collapsedReason: json["collapsed_reason"],
-      distinguished: json["distinguished"],
-      associatedAward: json["associated_award"],
-      stickied: json["stickied"] as bool,
-      authorPremium: json["author_premium"] as dynamic,
-      canGild: json["can_gild"] as bool,
-      linkId: (json["link_id"] ?? '') as String,
-      unrepliableReason: json["unrepliable_reason"],
-      authorFlairTextColor: (json["author_flair_text_color"] ?? '') as String,
-      scoreHidden: (json["score_hidden"] ?? true) as bool,
-      permalink: (json["permalink"] ?? '') as String,
-      linkPermalink: (json["link_permalink"] ?? '') as String,
-      name: (json["name"] ?? '') as String,
-      created: json["created"] as double,
-      subredditNamePrefixed: json["subreddit_name_prefixed"] as String,
-      authorFlairText: (json["author_flair_text"] ?? '') as String,
-      createdUtc: json["created_utc"] as double,
-      locked: (json["locked"] ?? false) as bool,
-      authorFlairBackgroundColor:
-          (json["author_flair_background_color"] ?? '') as String,
-      collapsedBecauseCrowdControl: json["collapsed_because_crowd_control"],
-      quarantine: json["quarantine"] as bool,
-      modNote: json["mod_note"],
-      linkUrl: (json["link_url"] ?? '') as String,
-      authorFlairTemplateId:
-          (json["author_flair_template_id"] ?? '') as String);
+  factory ChildData.fromJson(Map<String, dynamic> json) {
+    final t = 1668975922;
+
+    final convertedDate = convertDate(t);
+
+    return ChildData(
+        url_overridden_by_dest: json['url_overridden_by_dest'],
+        thumbnail: json['thumbnail'],
+        title: json['title'] as String,
+        subredditId: json["subreddit_id"] as String,
+        approvedAtUtc: json["approved_at_utc"],
+        authorIsBlocked: json["author_is_blocked"] as bool,
+        commentType: json["comment_type"],
+        selftext: (json["selftext"] ?? 'no text') as String,
+        linkTitle: (json["link_title"] ?? '') as String,
+        modReasonBy: json["mod_reason_by"],
+        bannedBy: (json["banned_by"] ?? ''),
+        ups: json["ups"] as int,
+        numReports: json["num_reports"],
+        totalAwardsReceived: json["total_awards_received"] as int,
+        subreddit: json["subreddit"] as String,
+        linkAuthor: (json["link_author"] ?? '') as String,
+        likes: (json["likes"] ?? false) as bool,
+        replies: (json["replies"] ?? '') as String,
+        saved: json["saved"] as bool,
+        id: json["id"] as String,
+        bannedAtUtc: json["banned_at_utc"],
+        modReasonTitle: json["mod_reason_title"],
+        gilded: json["gilded"] as int,
+        archived: json["archived"] as bool,
+        collapsedReasonCode: json["collapsed_reason_code"],
+        noFollow: json["no_follow"] as bool,
+        author: (json["author"] ?? 'No Author') as String,
+        numComments: json["num_comments"] as int,
+        canModPost: json["can_mod_post"] as bool,
+        sendReplies: json["send_replies"] as bool,
+        parentId: (json["parent_id"] ?? '') as String,
+        score: json["score"] as int,
+        authorFullname: (json["author_fullname"] ?? '') as String,
+        over18: json["over_18"] as bool,
+        reportReasons: json["report_reasons"],
+        removalReason: json["removal_reason"],
+        approvedBy: json["approved_by"],
+        controversiality: (json["controversiality"] ?? 0) as int,
+        body: (json["body"] ?? '') as String,
+        edited: json["edited"] as dynamic,
+        topAwardedType: json["top_awarded_type"],
+        downs: json["downs"] as int,
+        authorFlairCssClass: (json["author_flair_css_class"] ?? '') as String,
+        isSubmitter: (json["is_submitter"] ?? false) as bool,
+        collapsed: (json["collapsed"] ?? true) as bool,
+        authorPatreonFlair: (json["author_patreon_flair"] ?? true) as bool,
+        bodyHtml: (json["body_html"] ?? '') as String,
+        collapsedReason: json["collapsed_reason"],
+        distinguished: json["distinguished"],
+        associatedAward: json["associated_award"],
+        stickied: json["stickied"] as bool,
+        authorPremium: json["author_premium"] as dynamic,
+        canGild: json["can_gild"] as bool,
+        linkId: (json["link_id"] ?? '') as String,
+        unrepliableReason: json["unrepliable_reason"],
+        authorFlairTextColor: (json["author_flair_text_color"] ?? '') as String,
+        scoreHidden: (json["score_hidden"] ?? true) as bool,
+        permalink: (json["permalink"] ?? '') as String,
+        linkPermalink: (json["link_permalink"] ?? '') as String,
+        name: (json["name"] ?? '') as String,
+        created: json["created"] as double,
+        subredditNamePrefixed: json["subreddit_name_prefixed"] as String,
+        authorFlairText: (json["author_flair_text"] ?? '') as String,
+        createdUtc: convertedDate,
+        locked: (json["locked"] ?? false) as bool,
+        authorFlairBackgroundColor:
+            (json["author_flair_background_color"] ?? '') as String,
+        collapsedBecauseCrowdControl: json["collapsed_because_crowd_control"],
+        quarantine: json["quarantine"] as bool,
+        modNote: json["mod_note"],
+        linkUrl: (json["link_url"] ?? '') as String,
+        authorFlairTemplateId:
+            (json["author_flair_template_id"] ?? '') as String);
+  }
 
   Map<String, dynamic> toJson() => {
         "subreddit_id": subredditId,
@@ -565,6 +572,15 @@ class ChildData {
         "link_url": linkUrl,
         "author_flair_template_id": authorFlairTemplateId,
       };
+
+  static String convertDate(int dateInEpoch) {
+    DateTime date = new DateTime.fromMillisecondsSinceEpoch(
+        int.parse(dateInEpoch.toString()),
+        isUtc: true);
+    final format = new DateFormat("yMd");
+    var dateString = format.format(date);
+    return dateString;
+  }
 }
 
 enum E { EMOJI, TEXT }
