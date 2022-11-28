@@ -26,85 +26,87 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      floatingActionButton: FloatingActionButton(
-        backgroundColor: Theme.of(context).primaryColor,
-        child: Icon(
-          Icons.add,
-        ),
-        onPressed: () {},
-      ),
-      drawer: MediaQuery.of(context).size.width < 600 ? Drawer() : null,
-      appBar: customAppbar(context),
-      body: BlocConsumer<RedditPostsBloc, RedditPostsState>(
-        buildWhen: (previous, current) => previous != current,
-        listener: (context, state) {
-          if (state is LoadingRedditPosts) {
-            showSnackbar(context,
-                message: 'Loading More Posts!',
-                snackbarType: SnackbarType.success);
-          }
-          if (state is RedditPostsFailed) {
-            showSnackbar(context,
-                message: 'Failed To Load Posts, Please Try Again!',
-                snackbarType: SnackbarType.success);
-          }
-        },
-        builder: (context, state) {
-          if (state is LoadedRedditPostsSuccessfully) {
-            //TODO: Split into separate widgets
-
-            return LayoutBuilder(builder: (context, constraints) {
-              if (constraints.maxWidth < 600) {
-                return postsList(context, state, constraints);
-              }
-              final subscribedSubredditList = state.subscribedSubredditList;
-              return Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  LeftSidePanel(state: subscribedSubredditList),
-                  postsList(context, state, constraints),
-                  Container(
-                    width: MediaQuery.of(context).size.width * 0.2,
-                    // color: Colors.black,
-                  ),
-                ],
-              );
-            });
-          }
-          if (state is RedditPostsFailed) {
-            final errorState = state.failedMessage;
-            return Center(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    'Something went wrong! \n$errorState',
-                    style: TextStyle(),
-                  ),
-                  ElevatedButton(
-                    style: ButtonStyle(
-                      backgroundColor: MaterialStatePropertyAll(
-                        Theme.of(context).colorScheme.secondary,
-                      ),
-                    ),
-                    onPressed: () =>
-                        context.read<RedditPostsBloc>().add(LoadRedditPosts()),
-                    child: Text(
-                      'Try Reloading!',
-                    ),
-                  ),
-                ],
+    return BlocConsumer<RedditPostsBloc, RedditPostsState>(
+      buildWhen: (previous, current) => previous != current,
+      listener: (context, state) {
+        if (state is LoadingRedditPosts) {
+          showSnackbar(context,
+              message: 'Loading More Posts!',
+              snackbarType: SnackbarType.success);
+        }
+        if (state is RedditPostsFailed) {
+          showSnackbar(context,
+              message: 'Failed To Load Posts, Please Try Again!',
+              snackbarType: SnackbarType.success);
+        }
+      },
+      builder: (context, state) {
+        if (state is LoadedRedditPostsSuccessfully) {
+          //TODO: Split into separate widgets
+          final subscribedSubredditList = state.subscribedSubredditList;
+          return LayoutBuilder(builder: (context, constraints) {
+            return Scaffold(
+              floatingActionButton: FloatingActionButton(
+                backgroundColor: Theme.of(context).primaryColor,
+                child: Icon(
+                  Icons.add,
+                ),
+                onPressed: () {},
               ),
+              drawer: constraints.maxWidth < 600
+                  ? Drawer(
+                      child: LeftSidePanel(state: subscribedSubredditList),
+                    )
+                  : null,
+              appBar: customAppbar(context),
+              body: (constraints.maxWidth < 600)
+                  ? postsList(context, state, constraints)
+                  : Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        LeftSidePanel(state: subscribedSubredditList),
+                        postsList(context, state, constraints),
+                        Container(
+                          width: MediaQuery.of(context).size.width * 0.2,
+                          // color: Colors.black,
+                        ),
+                      ],
+                    ),
             );
-          }
+          });
+        }
+        if (state is RedditPostsFailed) {
+          final errorState = state.failedMessage;
           return Center(
-            child: LoadingIndicator(),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  'Something went wrong! \n$errorState',
+                  style: TextStyle(),
+                ),
+                ElevatedButton(
+                  style: ButtonStyle(
+                    backgroundColor: MaterialStatePropertyAll(
+                      Theme.of(context).colorScheme.secondary,
+                    ),
+                  ),
+                  onPressed: () =>
+                      context.read<RedditPostsBloc>().add(LoadRedditPosts()),
+                  child: Text(
+                    'Try Reloading!',
+                  ),
+                ),
+              ],
+            ),
           );
-        },
-      ),
+        }
+        return Center(
+          child: LoadingIndicator(),
+        );
+      },
     );
   }
 
