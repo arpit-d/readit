@@ -13,12 +13,14 @@ import 'package:readit/bloc/auth_bloc/auth_bloc.dart';
 import 'package:readit/bloc/reddit_posts_bloc/reddit_posts_bloc.dart';
 import 'package:readit/core/locator.dart';
 import 'package:readit/core/theme/custom_theme.dart';
+import 'package:readit/cubit/user_data_cubit.dart';
 import 'package:readit/l10n/l10n.dart';
 import 'package:readit/repository/reddit_posts_repository.dart';
 import 'package:readit/view/screens/sign_up_page.dart';
 
 import '../core/utils/snackbars.dart';
 import '../core/routing.dart';
+import '../repository/user_data_repository.dart';
 import 'screens/home_screen.dart';
 
 class ReaditApp extends StatefulWidget {
@@ -86,10 +88,19 @@ class AuthWrapper extends StatelessWidget {
           //       UserDataCubit(context.read<UserDataRepository>()),
           //   child: ProfilePage(),
           // );
-          return BlocProvider(
-            create: (context) =>
-                RedditPostsBloc(locator.get<RedditPostsRepository>())
-                  ..add(LoadRedditPosts()),
+          return MultiBlocProvider(
+            providers: [
+              BlocProvider(
+                create: (context) =>
+                    RedditPostsBloc(locator.get<RedditPostsRepository>())
+                      ..add(LoadRedditPosts()),
+              ),
+              BlocProvider(
+                create: (context) => UserDataCubit(
+                  locator.get<UserDataRepository>(),
+                ),
+              ),
+            ],
             child: HomeScreen(),
           );
         }

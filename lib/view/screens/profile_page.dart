@@ -8,7 +8,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../bloc/auth_bloc/auth_bloc.dart';
 import '../../cubit/user_data_cubit.dart';
 
 class ProfilePage extends StatelessWidget {
@@ -18,12 +17,6 @@ class ProfilePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        actions: [
-          ElevatedButton(
-            onPressed: () => context.read<AuthBloc>().add(AuthSignOutEvent()),
-            child: Text('Sign Out'),
-          ),
-        ],
         centerTitle: true,
         title: Text('Profile'),
       ),

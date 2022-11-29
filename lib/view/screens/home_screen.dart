@@ -8,6 +8,7 @@ import 'package:readit/models/subreddits_list_model.dart' as sb;
 import 'package:readit/view/screens/image_viewer.dart';
 
 import '../../bloc/auth_bloc/auth_bloc.dart';
+import '../../cubit/user_data_cubit.dart';
 
 enum Menu { profile, settings, signOut }
 
@@ -125,7 +126,24 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
       actions: [
         PopupMenuButton<Menu>(
-          child: CircleAvatar(),
+          child: BlocBuilder<UserDataCubit, UserDataState>(
+            builder: (context, state) {
+              if (state is UserDataLoadedState) {
+                final data = state.userData;
+                return CircleAvatar(
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(20),
+                    child: Image.network(
+                      '${data.iconImg}',
+                    ),
+                  ),
+                );
+              }
+              return CircleAvatar(
+                backgroundColor: Theme.of(context).primaryColor,
+              );
+            },
+          ),
           itemBuilder: (BuildContext context) => <PopupMenuEntry<Menu>>[
             PopupMenuItem<Menu>(
               value: Menu.profile,
