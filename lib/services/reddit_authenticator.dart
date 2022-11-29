@@ -105,8 +105,10 @@ class RedditAuthenticator {
     );
     if (response.statusCode == 200) {
       dev.log('RESPONSE STATUS CODE: ${response.statusCode}');
-      final responseData =
-          AccessTokenResponseModel.fromJson(response.body.toString());
+      final rawResponseData =
+          jsonDecode(response.body.toString()) as Map<String, dynamic>;
+      rawResponseData['token_last_updated'] = DateTime.now().toString();
+      final responseData = AccessTokenResponseModel.fromMap(rawResponseData);
       dev.log(responseData.toString());
       return responseData;
     } else {
@@ -176,7 +178,7 @@ class RedditAuthenticator {
   bool checkIfRefreshNeeded(AccessTokenResponseModel storedCredentials) {
     final formatedLastUpdated =
         DateTime.parse(storedCredentials.tokenLastUpdated);
-
+    // dev.log(formatedLastUpdated.toIso8601String());
     if ((DateTime.now().difference(formatedLastUpdated)).inMinutes > 50) {
       dev.log('Access token refresh needed!');
       return true;

@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:developer';
 
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -26,8 +27,10 @@ class CredentialsStorage {
 
       if (json == null) return null;
       log('Fetching credentials from local storage');
+      final rawResponseData =
+          jsonDecode(json.toString()) as Map<String, dynamic>;
       return _cachedAccessTokenCredentials =
-          AccessTokenResponseModel.fromJson(json);
+          AccessTokenResponseModel.fromMap(rawResponseData);
     } catch (e, stacktrace) {
       print('platformException occured' + e.toString() + stacktrace.toString());
     }

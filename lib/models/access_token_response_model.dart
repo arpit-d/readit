@@ -29,7 +29,7 @@ class AccessTokenResponseModel {
     return AccessTokenResponseModel(
       accessToken: map['access_token'] as String,
       tokenType: map['token_type'] as String,
-      tokenLastUpdated: DateTime.now().toString(),
+      tokenLastUpdated: map['token_last_updated'] as String,
       refreshToken: map['refresh_token'] as String,
       scope: map['scope'] as String,
     );
@@ -37,9 +37,12 @@ class AccessTokenResponseModel {
 
   String toJson() => json.encode(toMap());
 
-  factory AccessTokenResponseModel.fromJson(String source) =>
-      AccessTokenResponseModel.fromMap(
-          jsonDecode(source) as Map<String, dynamic>);
+  // factory AccessTokenResponseModel.fromJson(String source) {
+  //   final map = jsonDecode(source) as Map<String, dynamic>;
+  //   map['token_last_updated'] = DateTime.now().toString();
+  //   log(map.toString());
+  //   return AccessTokenResponseModel.fromMap(map);
+  // }
 
   AccessTokenResponseModel copyWith({AccessTokenResponseModel? data}) {
     return AccessTokenResponseModel(
