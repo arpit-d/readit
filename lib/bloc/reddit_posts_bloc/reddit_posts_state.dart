@@ -9,9 +9,11 @@ abstract class RedditPostsState extends Equatable {
 
 class LoadingRedditPosts extends RedditPostsState {}
 
+class Voted extends RedditPostsState {}
+
 class LoadedRedditPostsSuccessfully extends RedditPostsState {
   final RedditPostsModel redditPosts;
-  final SubredditListModel subscribedSubredditList;
+  final sb.SubredditListModel subscribedSubredditList;
 
   LoadedRedditPostsSuccessfully(
       {required this.redditPosts, required this.subscribedSubredditList});

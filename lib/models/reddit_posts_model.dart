@@ -212,7 +212,7 @@ class ChildData {
   final int totalAwardsReceived;
   final String subreddit;
   final String linkAuthor;
-  final bool likes;
+  final bool? likes;
   final String replies;
   final String title;
   final bool saved;
@@ -430,6 +430,8 @@ class ChildData {
     final t = 1668975922;
 
     final convertedDate = convertDate(t);
+    print(json['likes']);
+    //final likes = determineVote(json['likes']);
 
     return ChildData(
         linkFlairText: (json['link_flair_text']) == null
@@ -451,7 +453,11 @@ class ChildData {
         totalAwardsReceived: json["total_awards_received"] as int,
         subreddit: json["subreddit"] as String,
         linkAuthor: (json["link_author"] ?? '') as String,
-        likes: (json["likes"] ?? false) as bool,
+        likes: json["likes"] == null
+            ? null
+            : (json["likes"] as bool) == true
+                ? true
+                : false,
         replies: (json["replies"] ?? '') as String,
         saved: json["saved"] as bool,
         id: json["id"] as String,
@@ -587,6 +593,10 @@ class ChildData {
     var dateString = format.format(date);
     return dateString;
   }
+
+  // static bool determineVote(bool likes) {
+
+  // }
 }
 
 enum E { EMOJI, TEXT }

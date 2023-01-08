@@ -29,6 +29,9 @@ class RedditPostsRepository {
     }
   }
 
+  Future<String> upvoteOrDownvote(String id, int dir) async =>
+      await _redditPostsService.upvoteOrDownvote(id, dir);
+
   Future<SubredditListModel> getListOfSubscribedSubreddits() async {
     try {
       //TODO: Try & get list of all subscribed subreddits at once

@@ -3,7 +3,7 @@ import 'dart:developer';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:readit/models/reddit_posts_model.dart';
-import 'package:readit/models/subreddits_list_model.dart';
+import 'package:readit/models/subreddits_list_model.dart' as sb;
 import 'package:readit/repository/reddit_posts_repository.dart';
 
 part 'reddit_posts_event.dart';
@@ -16,6 +16,7 @@ class RedditPostsBloc extends Bloc<RedditPostsEvent, RedditPostsState> {
 
   RedditPostsBloc(this._postsRepository) : super(LoadingRedditPosts()) {
     on<LoadRedditPosts>(_loadRedditPosts);
+    on<VoteRedditPosts>(_upvoteOrDownVote);
   }
 
   void _loadRedditPosts(
@@ -28,6 +29,16 @@ class RedditPostsBloc extends Bloc<RedditPostsEvent, RedditPostsState> {
           redditPosts: redditPosts,
           subscribedSubredditList: subscribedSubreddits));
       postLimit += 10;
+    } catch (e) {
+      log(e.toString());
+      emit(RedditPostsFailed(failedMessage: e.toString().substring(11)));
+    }
+  }
+
+  void _upvoteOrDownVote(
+      VoteRedditPosts event, Emitter<RedditPostsState> emit) async {
+    try {
+      await _postsRepository.upvoteOrDownvote(event.post.data.name, event.dir);
     } catch (e) {
       log(e.toString());
       emit(RedditPostsFailed(failedMessage: e.toString().substring(11)));

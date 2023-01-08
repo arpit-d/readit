@@ -57,4 +57,35 @@ class RedditPostsService {
       throw Exception(e.toString());
     }
   }
+
+  Future<String> upvoteOrDownvote(String id, int dir) async {
+    try {
+      final accessToken =
+          await _authenticationRepository.getSignedInCredentials();
+      final Uri uri = Uri.https(
+        'oauth.reddit.com',
+        'api/vote',
+        {
+          'dir': dir.toString(),
+          'id': id.toString(),
+          'rank': '2',
+        },
+      );
+      final response = await http.post(
+        uri,
+        headers: {
+          'Authorization': 'bearer $accessToken',
+          'User-Agent': 'ReadIt by /u/arpdp',
+          'Content-Type': 'application/json',
+        },
+      );
+      print(response.body);
+      return response.body;
+    } on SocketException {
+      throw Exception('No Network Found!');
+    } catch (e) {
+      log(e.toString());
+      throw Exception(e.toString());
+    }
+  }
 }

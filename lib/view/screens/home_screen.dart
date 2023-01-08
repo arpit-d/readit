@@ -193,6 +193,8 @@ class _HomeScreenState extends State<HomeScreen> {
           itemCount: state.redditPosts.data.children.length,
           itemBuilder: (context, index) {
             final post = state.redditPosts.data.children[index];
+            // final upvoteOrDownvote = post.data.likes ??;
+
             return Card(
               shadowColor: Colors.white,
               shape: RoundedRectangleBorder(
@@ -232,15 +234,31 @@ class _HomeScreenState extends State<HomeScreen> {
                             '${post.data.numComments} comments',
                           ),
                           IconButton(
-                            onPressed: () {},
+                            onPressed: () =>
+                                context.read<RedditPostsBloc>().add(
+                                      (VoteRedditPosts(post: post, dir: 1)),
+                                    ),
                             icon: Icon(Icons.arrow_upward_outlined),
                             padding: EdgeInsets.zero,
+                            color: post.data.likes == null
+                                ? null
+                                : !post.data.likes!
+                                    ? Colors.orange
+                                    : null,
                             constraints: BoxConstraints(),
                           ),
                           IconButton(
-                            onPressed: () {},
+                            onPressed: () =>
+                                context.read<RedditPostsBloc>().add(
+                                      (VoteRedditPosts(post: post, dir: -1)),
+                                    ),
                             icon: Icon(Icons.arrow_downward_outlined),
                             padding: EdgeInsets.zero,
+                            color: post.data.likes == null
+                                ? null
+                                : !post.data.likes!
+                                    ? Colors.purple
+                                    : null,
                             constraints: BoxConstraints(),
                           ),
                           IconButton(
