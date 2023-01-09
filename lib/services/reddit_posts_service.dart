@@ -58,7 +58,7 @@ class RedditPostsService {
     }
   }
 
-  Future<String> upvoteOrDownvote(String id, int dir) async {
+  Future<bool> upvoteOrDownvote(String id, int dir) async {
     try {
       final accessToken =
           await _authenticationRepository.getSignedInCredentials();
@@ -79,8 +79,12 @@ class RedditPostsService {
           'Content-Type': 'application/json',
         },
       );
-      print(response.body);
-      return response.body;
+      if (response.statusCode == 200) {
+        log("Vote Succesful!");
+        return true;
+      }
+      log("Vote Unsuccesful!");
+      return false;
     } on SocketException {
       throw Exception('No Network Found!');
     } catch (e) {

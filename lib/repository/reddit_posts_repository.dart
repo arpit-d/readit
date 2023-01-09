@@ -29,7 +29,7 @@ class RedditPostsRepository {
     }
   }
 
-  Future<String> upvoteOrDownvote(String id, int dir) async =>
+  Future<bool> upvoteOrDownvote(String id, int dir) async =>
       await _redditPostsService.upvoteOrDownvote(id, dir);
 
   Future<SubredditListModel> getListOfSubscribedSubreddits() async {

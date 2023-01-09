@@ -9,8 +9,6 @@ abstract class RedditPostsState extends Equatable {
 
 class LoadingRedditPosts extends RedditPostsState {}
 
-class Voted extends RedditPostsState {}
-
 class LoadedRedditPostsSuccessfully extends RedditPostsState {
   final RedditPostsModel redditPosts;
   final sb.SubredditListModel subscribedSubredditList;
@@ -19,7 +17,7 @@ class LoadedRedditPostsSuccessfully extends RedditPostsState {
       {required this.redditPosts, required this.subscribedSubredditList});
 
   @override
-  List<Object> get props => [redditPosts];
+  List<Object> get props => [redditPosts, subscribedSubredditList];
 }
 
 class RedditPostsFailed extends RedditPostsState {

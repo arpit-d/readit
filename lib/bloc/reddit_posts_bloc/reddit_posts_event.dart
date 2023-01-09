@@ -10,9 +10,3 @@ abstract class RedditPostsEvent extends Equatable {
 class LoadRedditPosts extends RedditPostsEvent {
   const LoadRedditPosts();
 }
-
-class VoteRedditPosts extends RedditPostsEvent {
-  final Child post;
-  final int dir;
-  const VoteRedditPosts({required this.post, required this.dir});
-}

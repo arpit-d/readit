@@ -3,12 +3,15 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:readit/bloc/reddit_posts_bloc/reddit_posts_bloc.dart';
 import 'package:readit/core/utils/snackbars.dart';
+import 'package:readit/cubit/vote_cubit/vote_cubit.dart';
 import 'package:readit/models/reddit_posts_model.dart';
 import 'package:readit/models/subreddits_list_model.dart' as sb;
 import 'package:readit/view/screens/image_viewer.dart';
 
 import '../../bloc/auth_bloc/auth_bloc.dart';
+import '../../core/locator.dart';
 import '../../cubit/user_data_cubit.dart';
+import '../../repository/reddit_posts_repository.dart';
 
 enum Menu { profile, settings, signOut }
 
@@ -30,7 +33,6 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       backgroundColor: Colors.white,
       body: BlocConsumer<RedditPostsBloc, RedditPostsState>(
-        buildWhen: (previous, current) => previous != current,
         listener: (context, state) {
           if (state is LoadingRedditPosts) {
             showSnackbar(context,
@@ -43,6 +45,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 snackbarType: SnackbarType.success);
           }
         },
+        //  buildWhen: (previous, current) => previous != current,
         builder: (context, state) {
           if (state is LoadedRedditPostsSuccessfully) {
             //TODO: Split into separate widgets
@@ -224,50 +227,66 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                     Padding(
                       padding: const EdgeInsets.all(8.0),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            '${post.data.score} points',
-                          ),
-                          Text(
-                            '${post.data.numComments} comments',
-                          ),
-                          IconButton(
-                            onPressed: () =>
-                                context.read<RedditPostsBloc>().add(
-                                      (VoteRedditPosts(post: post, dir: 1)),
-                                    ),
-                            icon: Icon(Icons.arrow_upward_outlined),
-                            padding: EdgeInsets.zero,
-                            color: post.data.likes == null
-                                ? null
-                                : !post.data.likes!
-                                    ? Colors.orange
-                                    : null,
-                            constraints: BoxConstraints(),
-                          ),
-                          IconButton(
-                            onPressed: () =>
-                                context.read<RedditPostsBloc>().add(
-                                      (VoteRedditPosts(post: post, dir: -1)),
-                                    ),
-                            icon: Icon(Icons.arrow_downward_outlined),
-                            padding: EdgeInsets.zero,
-                            color: post.data.likes == null
-                                ? null
-                                : !post.data.likes!
-                                    ? Colors.purple
-                                    : null,
-                            constraints: BoxConstraints(),
-                          ),
-                          IconButton(
-                            onPressed: () {},
-                            icon: Icon(Icons.bookmark_outline_outlined),
-                            padding: EdgeInsets.zero,
-                            constraints: BoxConstraints(),
-                          ),
-                        ],
+                      child: BlocProvider(
+                        create: (context) => VoteCubit(
+                            id: post.data.name,
+                            score: post.data.score,
+                            redditPostsRepository:
+                                locator.get<RedditPostsRepository>()),
+                        child: Builder(builder: (context) {
+                          return BlocBuilder<VoteCubit, VoteState>(
+                            buildWhen: (previous, current) =>
+                                previous.vote != current.vote,
+                            builder: (context, state) {
+                              return Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    '${state.score} points',
+                                  ),
+                                  Text(
+                                    '${post.data.numComments} comments',
+                                  ),
+                                  IconButton(
+                                    splashColor: Colors.orangeAccent,
+                                    onPressed: () =>
+                                        context.read<VoteCubit>().vote(1),
+                                    icon: Icon(Icons.arrow_upward_outlined),
+                                    padding: EdgeInsets.zero,
+                                    color: state.voteStatus !=
+                                                VoteStatus.initial &&
+                                            state.voteStatus !=
+                                                VoteStatus.failure &&
+                                            state.vote == Vote.up
+                                        ? Colors.orange
+                                        : null,
+                                  ),
+                                  IconButton(
+                                    onPressed: () =>
+                                        context.read<VoteCubit>().vote(-1),
+                                    icon: Icon(Icons.arrow_downward_outlined),
+                                    padding: EdgeInsets.zero,
+                                    splashColor: Colors.purpleAccent,
+                                    color: state.voteStatus !=
+                                                VoteStatus.initial &&
+                                            state.voteStatus !=
+                                                VoteStatus.failure &&
+                                            state.vote == Vote.down
+                                        ? Colors.purple
+                                        : null,
+                                  ),
+                                  IconButton(
+                                    onPressed: () {},
+                                    icon: Icon(Icons.bookmark_outline_outlined),
+                                    padding: EdgeInsets.zero,
+                                    constraints: BoxConstraints(),
+                                  ),
+                                ],
+                              );
+                            },
+                          );
+                        }),
                       ),
                     )
                   ],
