@@ -6,8 +6,9 @@ import 'custom_colors.dart';
 class CustomTheme {
   static ThemeData get lightTheme {
     return ThemeData(
+        useMaterial3: true,
         visualDensity: VisualDensity.adaptivePlatformDensity,
-        primaryColor: CustomColors.primarySecond,
+        primaryColor: CustomColors.primaryThird,
         scaffoldBackgroundColor: Color(0xFFE5E5E5),
         textTheme: GoogleFonts.ibmPlexSansTextTheme(),
         scrollbarTheme: ScrollbarThemeData(
